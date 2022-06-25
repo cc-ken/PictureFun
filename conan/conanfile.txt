@@ -1,0 +1,11 @@
+[requires]
+    opencv/4.5.5
+    qt/6.2.4
+    spdlog/1.10.0
+    tinyxml2/9.0.0
+
+[generators]
+    cmake_find_package
+
+[options]
+    opencv:with_ffmpeg=False
