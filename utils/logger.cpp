@@ -49,7 +49,7 @@ void Logger::init(int target, int level, const std::string& path, const std::str
         else
         {
 #if defined(_WINDOWS) || defined(LINUX)
-            std::string defaultFolder = getDefaultFolder() + "/Litemaze";
+            std::string defaultFolder = getDefaultFolder() + "/pf";
             if (!cv::utils::fs::exists(defaultFolder))
                 cv::utils::fs::createDirectory(defaultFolder);
             defaultFolder = defaultFolder + "/Logs/";
@@ -57,12 +57,10 @@ void Logger::init(int target, int level, const std::string& path, const std::str
                 cv::utils::fs::createDirectory(defaultFolder);
 #elif defined(__APPLE__)
             std::string defaultFolder = getDefaultFolder() + "/Logs/";
-#elif defined(ARMLINUX)
-            std::string defaultFolder = "/var/log/";
 #else
             std::string defaultFolder = getDefaultFolder() + "/";
 #endif
-            outFolder = defaultFolder + (path.empty() ? "SRSCommon" : path);
+            outFolder = defaultFolder + (path.empty() ? "pf" : path);
             if (!cv::utils::fs::exists(outFolder))
                 cv::utils::fs::createDirectory(outFolder);
         }

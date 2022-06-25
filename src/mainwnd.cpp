@@ -7,130 +7,125 @@
 
 using namespace pf;
 
-MainWnd::MainWnd()
+MainWnd::MainWnd(QApplication *app)
     : QMainWindow(nullptr)
+    , application_(app)
 {
     int width = preference::i().get("main-width", 1280);
     int height = preference::i().get("main-height", 720);
     resize(width, height);
+    setMinimumSize(QSize(640, 480));
 
     setWindowTitle(PF_TEXT("main.title", "Picture Fun"));
+    
+    QWidget *widget = new QWidget;
+    setCentralWidget(widget);
 
-    /*
-     QWidget *centralwidget = new QWidget(this);
-     splitter_ = new QSplitter(centralwidget);
-     splitter_->setOrientation(Qt::Vertical);
+    QVBoxLayout *layout = new QVBoxLayout;
+    layout->setContentsMargins(5, 5, 5, 5);
+    widget->setLayout(layout);
 
-     auto centralLayout = new QVBoxLayout(centralwidget);
-     centralLayout->setSpacing(0);
+    createActions();
+    createMenus();
+    
+    toolbar = new QToolBar();
+    toolbar->addAction(openAct);
+    
+    QWidget *main = new QWidget();
+    main->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    
+    layout->addWidget(toolbar);
+    layout->addWidget(main);
+    
+    statusBar()->showMessage(PF_TEXT("main.title", "Picture Fun"));
+}
 
-     logView_ = new LogViewer();
+void MainWnd::createMenus()
+{
+    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(newAct);
+    fileMenu->addAction(openAct);
+    fileMenu->addAction(saveAct);
+    fileMenu->addAction(printAct);
+    fileMenu->addSeparator();
+    fileMenu->addAction(exitAct);
 
-     splitter_->setStyleSheet("QSplitter::handle { background-color: lightgray; margin-top: 3px;}");
-     splitter_->setHandleWidth(8);
-     splitter_->setContentsMargins(0, 0, 0, 0);
+    editMenu = menuBar()->addMenu(tr("&Edit"));
+    editMenu->addAction(undoAct);
+    editMenu->addAction(redoAct);
+    editMenu->addSeparator();
+    editMenu->addAction(cutAct);
+    editMenu->addAction(copyAct);
+    editMenu->addAction(pasteAct);
+    editMenu->addSeparator();
 
-     QWidget *container = new QWidget();
-     QHBoxLayout *containerLayout = new QHBoxLayout(container);
+    helpMenu = menuBar()->addMenu(tr("&Help"));
+    helpMenu->addAction(aboutAct);
+    helpMenu->addAction(aboutQtAct);
+}
 
-     QWidget *buttonGroup = new QWidget();
-     QVBoxLayout *rightLayout = new QVBoxLayout(buttonGroup);
-     buttonGroup->setMinimumWidth(240);
+void MainWnd::createActions()
+{
+    newAct = new QAction(tr("&New"), this);
+    newAct->setShortcuts(QKeySequence::New);
+    newAct->setStatusTip(tr("Create a new file"));
+    //connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
 
-     QLabel *runningLabel = new QLabel();
-     runningLabel->setText(LITERAL_DEFAULT("running", "Running Status:"));
-     runningStatus_ = new InfoLabel();
+    openAct = new QAction(tr("&Open..."), this);
+    openAct->setShortcuts(QKeySequence::Open);
+    openAct->setStatusTip(tr("Open an existing file"));
+    //connect(openAct, &QAction::triggered, this, &MainWindow::open);
 
-     QHBoxLayout *runBox = new QHBoxLayout();
-     runningStatus_->setText(LITERAL_DEFAULT("safety", "Safety"));
-     runningStatus_->setSliderColorOff(QColor(255, 0, 0));
-     runningStatus_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-     runBox->addWidget(runningStatus_);
-     runBox->addSpacerItem(new QSpacerItem(100, 10, QSizePolicy::Maximum, QSizePolicy::Ignored));
+    saveAct = new QAction(tr("&Save"), this);
+    saveAct->setShortcuts(QKeySequence::Save);
+    saveAct->setStatusTip(tr("Save the document to disk"));
+    //connect(saveAct, &QAction::triggered, this, &MainWindow::save);
 
-     QGridLayout *connectGrid = new QGridLayout();
-     for (int i = 0; i < 5; i++) {
-         connectStatus_[i] = new InfoLabel();
-         QString stext;
-         stext.sprintf("%s%d", LITERAL_DEFAULT("camera", "Cam"), i + 1);
-         connectStatus_[i]->setText(stext);
-         connectGrid->addWidget(connectStatus_[i], i / 3, i % 3);
-     }
+    printAct = new QAction(tr("&Print..."), this);
+    printAct->setShortcuts(QKeySequence::Print);
+    printAct->setStatusTip(tr("Print the document"));
+    //connect(printAct, &QAction::triggered, this, &MainWindow::print);
 
-     QPushButton *btnManual = new QPushButton();
-     btnManual->setText(LITERAL_DEFAULT("manual", "Manual"));
+    exitAct = new QAction(tr("E&xit"), this);
+    exitAct->setShortcuts(QKeySequence::Quit);
+    exitAct->setStatusTip(tr("Exit the application"));
+    connect(exitAct, &QAction::triggered, this, &QWidget::close);
 
-     QPushButton *btnSetting = new QPushButton();
-     btnSetting->setText(LITERAL_DEFAULT("setting", "Setting"));
+    undoAct = new QAction(tr("&Undo"), this);
+    undoAct->setShortcuts(QKeySequence::Undo);
+    undoAct->setStatusTip(tr("Undo the last operation"));
+    //connect(undoAct, &QAction::triggered, this, &MainWindow::undo);
 
-     QPushButton *btnCapture = new QPushButton();
-     btnCapture->setText(LITERAL_DEFAULT("capture", "Capture"));
+    redoAct = new QAction(tr("&Redo"), this);
+    redoAct->setShortcuts(QKeySequence::Redo);
+    redoAct->setStatusTip(tr("Redo the last operation"));
+    //connect(redoAct, &QAction::triggered, this, &MainWindow::redo);
 
-     rightLayout->addWidget(runningLabel);
-     rightLayout->addLayout(runBox);
-     rightLayout->addLayout(connectGrid);
-     rightLayout->addWidget(btnManual);
-     rightLayout->addWidget(btnSetting);
-     rightLayout->addWidget(btnCapture);
-     rightLayout->addSpacerItem(new QSpacerItem(10, 50, QSizePolicy::Fixed, QSizePolicy::Expanding));
+    cutAct = new QAction(tr("Cu&t"), this);
+    cutAct->setShortcuts(QKeySequence::Cut);
+    cutAct->setStatusTip(tr("Cut the current selection's contents to the "
+                            "clipboard"));
+    //connect(cutAct, &QAction::triggered, this, &MainWindow::cut);
 
-     resultViewCam1_ = new ImageView();
-     resultViewCam1_->setMinimumHeight(360);
-     resultViewCam1_->setScaledContents(true);
-     resultViewCam1_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-     resultViewCam1_->setViewOnly(true);
+    copyAct = new QAction(tr("&Copy"), this);
+    copyAct->setShortcuts(QKeySequence::Copy);
+    copyAct->setStatusTip(tr("Copy the current selection's contents to the "
+                             "clipboard"));
+    //connect(copyAct, &QAction::triggered, this, &MainWindow::copy);
 
-     resultViewCam2_ = new ImageView();
-     resultViewCam2_->setMinimumHeight(360);
-     resultViewCam2_->setScaledContents(true);
-     resultViewCam2_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-     resultViewCam2_->setViewOnly(true);
+    pasteAct = new QAction(tr("&Paste"), this);
+    pasteAct->setShortcuts(QKeySequence::Paste);
+    pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
+                              "selection"));
+    //connect(pasteAct, &QAction::triggered, this, &MainWindow::paste);
 
-     resultViewCam3_ = new ImageView();
-     resultViewCam3_->setMinimumHeight(360);
-     resultViewCam3_->setScaledContents(true);
-     resultViewCam3_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-     resultViewCam3_->setViewOnly(true);
-
-     resultViewCam4_ = new ImageView();
-     resultViewCam4_->setMinimumHeight(360);
-     resultViewCam4_->setScaledContents(true);
-     resultViewCam4_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-     resultViewCam4_->setViewOnly(true);
-
-     resultViewOCR_ = new ImageView();
-     resultViewOCR_->setMinimumHeight(360);
-     resultViewOCR_->setScaledContents(true);
-     resultViewOCR_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-     resultViewOCR_->setViewOnly(true);
-
-     QGridLayout *resultViewGrid = new QGridLayout();
-     QGridLayout *detectionViewGrid = new QGridLayout();
-
-     detectionViewGrid->addWidget(resultViewCam1_, 0 / 2, 0 % 2);
-     detectionViewGrid->addWidget(resultViewCam2_, 1 / 2, 1 % 2);
-     detectionViewGrid->addWidget(resultViewCam3_, 2 / 2, 2 % 2);
-     detectionViewGrid->addWidget(resultViewCam4_, 3 / 2, 3 % 2);
-
-     resultViewGrid->addLayout(detectionViewGrid, 0/2, 0%2);
-     resultViewGrid->addWidget(resultViewOCR_, 1/2, 1%2);
-
-     containerLayout->addLayout(resultViewGrid);
-
-     containerLayout->addWidget(buttonGroup);
-
-     splitter_->addWidget(container);
-     splitter_->addWidget(logView_);
-
-     centralLayout->addWidget(splitter_);
-     setContentsMargins(0, 0, 0, 0);
-
-     setCentralWidget(centralwidget);
-
-     connect(btnManual, SIGNAL(clicked()), this, SLOT(onManual()));
-     connect(btnSetting, SIGNAL(clicked()), this, SLOT(onSetting()));
-     connect(btnCapture, SIGNAL(clicked()), this, SLOT(onCapture()));
- */
+    aboutAct = new QAction(tr("&About"), this);
+    aboutAct->setStatusTip(tr("Show the application's About box"));
+    //connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
+    
+    aboutQtAct = new QAction(tr("About &Qt"), this);
+    aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
+    connect(aboutQtAct, &QAction::triggered, application_, &QApplication::aboutQt);
 }
 
 MainWnd::~MainWnd() {

@@ -10,7 +10,11 @@
 #include "utils/i18n.h"
 #include "utils/system.h"
 
+#if defined(_WINDOWS)
+Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
+#elif defined(__APPLE__)
 Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
+#endif
 
 using namespace pf;
 
@@ -23,7 +27,7 @@ int main(int argc, char *argv[])
     
     QApplication app(argc, argv);
     
-    MainWnd mainwnd;
+    MainWnd mainwnd(&app);
     mainwnd.show();
     
     return app.exec();
