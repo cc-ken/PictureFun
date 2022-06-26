@@ -20,6 +20,8 @@
 #include <QApplication>
 #include <QToolBar>
 
+#include "imageview.h"
+
 namespace pf {
 
 class MainWnd : public QMainWindow
@@ -27,15 +29,21 @@ class MainWnd : public QMainWindow
 Q_OBJECT
 public:
     MainWnd(QApplication *app);
-    virtual ~MainWnd();
+    virtual ~MainWnd() = default;
     
 protected slots:
+    void open();
+    void fit();
+    void select();
+    void pixelValue(int x, int y, int r, int g, int b);
     
 protected:
     void createMenus();
     void createActions();
     
     QApplication *application_;
+    ImageView *imgView_;
+    
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *helpMenu;
@@ -52,6 +60,8 @@ protected:
     QAction *pasteAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
+    QAction *fitAct;
+    QAction *selectAct;
     QLabel *infoLabel;
     QToolBar *toolbar;
 };
