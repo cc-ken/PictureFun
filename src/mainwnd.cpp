@@ -105,7 +105,7 @@ void MainWnd::createActions()
     saveAct->setShortcuts(QKeySequence::Save);
     saveAct->setStatusTip(tr("Save the document to disk"));
     saveAct->setIcon(QApplication::style()->standardIcon(QStyle::SP_DialogSaveButton));
-    //connect(saveAct, &QAction::triggered, this, &MainWnd::save);
+    connect(saveAct, &QAction::triggered, this, &MainWnd::save);
     toolbar->addAction(saveAct);
 
     printAct = new QAction(tr("&Print..."), this);
@@ -174,7 +174,7 @@ void MainWnd::open() {
     if (imgFile.isEmpty())
         return;
     
-    imgView_->LoadImageFile(imgFile);
+    imgView_->loadImageFile(imgFile);
 }
 
 void MainWnd::fit() {
@@ -183,4 +183,8 @@ void MainWnd::fit() {
 
 void MainWnd::select() {
     imgView_->setSelecting(selectAct->isChecked());
+}
+
+void MainWnd::save() {
+    //imgView_->roi();
 }

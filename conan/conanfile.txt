@@ -3,6 +3,7 @@
     qt/6.2.4
     spdlog/1.10.0
     tinyxml2/9.0.0
+    ncnn/1.0.0@pf/stable
 
 [generators]
     cmake_find_package

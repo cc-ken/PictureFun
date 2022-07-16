@@ -18,7 +18,7 @@ ImageView::ImageView(QWidget *parent) : QLabel(parent), scale_(1.0f), zoom_(1.0f
     setMouseTracking(true);
 }
 
-int ImageView::LoadImageFile(QString strFileName)
+int ImageView::loadImageFile(QString strFileName)
 {
     std::string filename = strFileName.toStdString();
     cv::Mat img = cv::imread(filename, cv::IMREAD_UNCHANGED);
@@ -55,7 +55,7 @@ void ImageView::setMatImage(const cv::Mat &mat, bool nocopy)
     img_ = QImage(qImageBuffer, imgDisplay_.cols, imgDisplay_.rows, imgDisplay_.step, QImage::Format_RGB888);
     
     setPixmap(QPixmap::fromImage(img_));
-    update();
+    fit();
 }
 
 bool ImageView::event(QEvent *event)
@@ -139,6 +139,34 @@ void ImageView::paintEvent(QPaintEvent *event)
 
     QRect picRect(-w / 2, -h / 2, w, h);
     painter.drawImage(picRect, img_);
+    
+    if (selecting_)
+        drawSelectBox();
+}
+
+QRect ImageView::selectRect()
+{
+    QPoint lt(qMin(dragStartPos_.x(), dragCurrPos_.x()), qMin(dragStartPos_.y(), dragCurrPos_.y()));
+    QPoint br(qMax(dragStartPos_.x(), dragCurrPos_.x()), qMax(dragStartPos_.y(), dragCurrPos_.y()));
+    
+    return QRect(lt, br);
+}
+
+cv::Rect ImageView::roi() {
+    auto sel = selectRect();
+    cv::Rect result(view2mat(sel.topLeft()), view2mat(sel.bottomRight()));
+    
+    cv::imshow("test", imgOrigin_(result));
+    
+    return result;
+}
+
+void ImageView::drawSelectBox() {
+    QPainter painter(this);
+    painter.setPen(QPen(Qt::blue, 2, Qt::DotLine));
+    painter.setBrush(QBrush(Qt::transparent));
+    QRect roi = selectRect();
+    painter.drawRect(roi);
 }
 
 cv::Point ImageView::view2mat(QPoint p)
@@ -172,7 +200,7 @@ QSize ImageView::minimumSizeHint() const
 
 void ImageView::mousePressEvent(QMouseEvent *event)
 {
-    dragStartPos_ = event->pos();
+    dragCurrPos_ = dragStartPos_ = event->pos();
     pressed_ = true;
 }
 
@@ -187,12 +215,13 @@ void ImageView::mouseMoveEvent(QMouseEvent *event)
         return QWidget::mouseMoveEvent(event);
     }
 
-    setCursor(Qt::SizeAllCursor);
     QPoint pos = event->pos();
     if (selecting_) {
-        
+        setCursor(Qt::CrossCursor);
+        dragCurrPos_ = pos;
     }
     else {
+        setCursor(Qt::SizeAllCursor);
         pan_.x += (pos.x() - dragStartPos_.x());
         pan_.y += (pos.y() - dragStartPos_.y());
         dragStartPos_ = pos;
@@ -225,8 +254,7 @@ void ImageView::dragEnterEvent(QDragEnterEvent *event)
     }
 }
 
-
 void ImageView::dropEvent(QDropEvent *event)
 {
-    LoadImageFile(event->mimeData()->urls()[0].toLocalFile());
+    loadImageFile(event->mimeData()->urls()[0].toLocalFile());
 }

@@ -29,11 +29,11 @@ public:
     
 public:
     void setMatImage(const cv::Mat& mat, bool nocopy = false);
-    int LoadImageFile(QString strFileName);
-    cv::Mat getMat() const {
+    int loadImageFile(QString strFileName);
+    cv::Mat mat() const {
         return imgOrigin_;
     }
-    float GetCurImgScale() const {
+    float getCurScale() const {
         return scale_ * zoom_;
     }
     bool zoom(float factor);
@@ -43,10 +43,13 @@ public:
     }
     //QPoint mat2view(cv::Point2d pt);
     cv::Point view2mat(QPoint pt);
+    cv::Rect roi();
 
 protected:
     virtual QSize sizeHint() const override;
     virtual QSize minimumSizeHint() const override;
+    void drawSelectBox();
+    QRect selectRect();
 
     cv::Mat imgOrigin_;
     cv::Mat imgDisplay_;
@@ -58,6 +61,7 @@ protected:
     cv::Point pan_;
     cv::Rect selRect_;
     QPoint dragStartPos_;
+    QPoint dragCurrPos_;
     bool pressed_ = false;
     bool selecting_ = false;
     

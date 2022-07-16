@@ -35,6 +35,7 @@ protected slots:
     void open();
     void fit();
     void select();
+    void save();
     void pixelValue(int x, int y, int r, int g, int b);
     
 protected:
