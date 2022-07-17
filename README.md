@@ -12,4 +12,4 @@ Download [vulkan sdk](https://www.lunarg.com/vulkan-sdk/) and export the environ
 
 ## Where to download the models
 
-The current using background remove model is from this [repo](https://github.com/FeiGeChuanShu/ncnn_Android_matting.git), `hrnet-w18`, download them and put into `src/models)` folder.
+The current using background remove model is from this [ncnn_Android_matting](https://github.com/FeiGeChuanShu/ncnn_Android_matting.git), `hrnet-w18`, download them and put into `src/models)` folder.

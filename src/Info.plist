@@ -6,5 +6,7 @@
 	<string>com.ai-double.PictureFun</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Use camera to test</string>
+	<key>CFBundleIconFile</key>
+	<string>PictureFun.icns</string>
 </dict>
 </plist>

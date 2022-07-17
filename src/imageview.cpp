@@ -22,7 +22,8 @@ int ImageView::loadImageFile(QString strFileName)
 {
     std::string filename = strFileName.toStdString();
     cv::Mat img = cv::imread(filename, cv::IMREAD_UNCHANGED);
-    
+    imgLoaded_ = img.clone();
+
     setMatImage(img, false);
     
     return 0;

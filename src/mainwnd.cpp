@@ -7,15 +7,18 @@
 
 #include <QStyle>
 #include <QFileDialog>
+#include <QColorDialog>
 
 #include "ncnn_engine.h"
 #include "ppmatting.h"
+#include "imgproc.h"
 
 using namespace pf;
 
 MainWnd::MainWnd(QApplication *app)
     : QMainWindow(nullptr)
     , application_(app)
+    , bgColor_(120, 255, 155)
 {
     int defWidth = 1280, defHeight = 720;
     getScreenResolution(defWidth, defHeight);
@@ -92,6 +95,7 @@ void MainWnd::createMenus()
     editMenu->addAction(fitAct);
     editMenu->addAction(selectAct);
     editMenu->addAction(bgRemoveAct);
+    editMenu->addAction(bgColorAct);
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
@@ -177,6 +181,12 @@ void MainWnd::createActions()
     toolbar->addAction(bgRemoveAct);
     connect(bgRemoveAct, &QAction::triggered, this, &MainWnd::bgRemove);
 
+    bgColorAct = new QAction(tr("BG Color"), this);
+    bgColorAct->setStatusTip(tr("Change the background color."));
+    bgColorAct->setIcon(QApplication::style()->standardIcon(QStyle::SP_ArrowBack));
+    toolbar->addAction(bgColorAct);
+    connect(bgColorAct, &QAction::triggered, this, &MainWnd::bgColor);
+
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
     //connect(aboutAct, &QAction::triggered, this, &MainWnd::about);
@@ -213,6 +223,18 @@ void MainWnd::bgRemove() {
         LOG_WARN("Please onpen picture to remove backgroound");
         return;
     }
-    cv::Mat result = matting->inference(input);
-    imgView_->setMatImage(result);
+    alpha_ = matting->inference(input);
+    imgView_->setMatImage(blend(imgView_->origin(), alpha_, bgColor_));
+}
+
+void MainWnd::bgColor()
+{
+    QColor color = QColorDialog::getColor(Qt::blue);
+    bgColor_ = cv::Scalar(color.red(), color.green(), color.blue());
+    LOG_INFO("MainWnd::bgColor, color=" << bgColor_);
+    if (alpha_.empty() || alpha_.size() != imgView_->origin().size()) {
+        return;
+    }
+    
+    imgView_->setMatImage(blend(imgView_->origin(), alpha_, bgColor_));
 }

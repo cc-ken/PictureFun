@@ -33,6 +33,9 @@ public:
     cv::Mat mat() const {
         return imgOrigin_;
     }
+    cv::Mat origin() const {
+        return imgLoaded_;
+    }
     float getCurScale() const {
         return scale_ * zoom_;
     }
@@ -52,6 +55,7 @@ protected:
     QRect selectRect();
 
     cv::Mat imgOrigin_;
+    cv::Mat imgLoaded_;
     cv::Mat imgDisplay_;
     QImage img_;
     cv::Size viewSize_;

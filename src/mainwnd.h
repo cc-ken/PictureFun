@@ -37,6 +37,7 @@ protected slots:
     void select();
     void save();
     void bgRemove();
+    void bgColor();
     void pixelValue(int x, int y, int r, int g, int b);
     
 protected:
@@ -65,8 +66,11 @@ protected:
     QAction *fitAct;
     QAction *selectAct;
     QAction *bgRemoveAct;
+    QAction *bgColorAct;
     QLabel *infoLabel;
     QToolBar *toolbar;
+    cv::Scalar bgColor_;
+    cv::Mat alpha_;
 };
 
 }

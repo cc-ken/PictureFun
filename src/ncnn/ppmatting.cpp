@@ -94,22 +94,10 @@ public:
 
         ncnn::Mat alpha;
         ncnn::resize_bilinear(out, alpha, width, height);
-        cv::Mat blendImg = cv::Mat::zeros(cv::Size(width, height), CV_8UC3);
-
-        const int bg_color[3] = {120, 255, 155};
-        float* alpha_data = (float*)alpha.data;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                float alpha_ = alpha_data[i * width + j];
-                blendImg.at<cv::Vec3b>(i, j)[0] = input.at<cv::Vec3b>(i, j)[0] * alpha_ + (1 - alpha_) * bg_color[0];
-                blendImg.at<cv::Vec3b>(i, j)[1] = input.at<cv::Vec3b>(i, j)[1] * alpha_ + (1 - alpha_) * bg_color[1];
-                blendImg.at<cv::Vec3b>(i, j)[2] = input.at<cv::Vec3b>(i, j)[2] * alpha_ + (1 - alpha_) * bg_color[2];
-            }
-        }
-
-        //ncnn::Mat blengImg_ncnn = ncnn::Mat::from_pixels(blendImg.data,ncnn::Mat::PIXEL_RGB,blendImg.cols,blendImg.rows);
-
-        return blendImg;
+        
+        cv::Mat result(cv::Size(width, height), CV_32FC1, alpha.data);
+        
+        return result.clone();
     }
 };
 

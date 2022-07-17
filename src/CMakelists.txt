@@ -19,7 +19,7 @@ file(GLOB MAIN_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h ${CMAKE_CURRENT_LIST_DIR}
 file(GLOB RESOURCE_FILES ${CMAKE_CURRENT_LIST_DIR}/lang/*.xml)
 
 if (APPLE)
-    file(GLOB DNN_MODEL_FILES ${CMAKE_CURRENT_LIST_DIR}/models/*)
+    file(GLOB DNN_MODEL_FILES ${CMAKE_CURRENT_LIST_DIR}/models/*.bin ${CMAKE_CURRENT_LIST_DIR}/models/*.param)
     list(APPEND NCNN_LIBS "-F ${ncnn_FRAMEWORK_DIRS}")
     foreach(framework IN LISTS ncnn_FRAMEWORKS)
         list(APPEND NCNN_FRAMEWORKS "${ncnn_FRAMEWORK_DIRS}/${framework}.framework")
@@ -27,17 +27,28 @@ if (APPLE)
     endforeach(framework IN LISTS ncnn_FRAMEWORKS)
     list(APPEND NCNN_LIBS "-F $ENV{VULKAN_SDK}/Frameworks/" "-framework vulkan")
 
-    list(APPEND NCNN_FRAMEWORKS 
+    list(APPEND NCNN_FRAMEWORKS
         "$ENV{VULKAN_SDK}/Frameworks/vulkan.framework"
         "$ENV{VULKAN_SDK}/lib/libMoltenVK.dylib"
         )
-    list(APPEND VULKAN_ICD_FILENAMES "${CMAKE_CURRENT_LIST_DIR}/MoltenVK_icd.json")
+    list(APPEND VULKAN_ICD_FILENAMES "${CMAKE_CURRENT_LIST_DIR}/res/MoltenVK_icd.json")
+    set(MACOSX_BUNDLE_ICON_FILE PictureFun.icns)
+    list(APPEND APPLICATION_ICNS "${CMAKE_CURRENT_LIST_DIR}/res/PictureFun.icns")
     set_source_files_properties(${NCNN_FRAMEWORKS} PROPERTIES MACOSX_PACKAGE_LOCATION Frameworks)
     set_source_files_properties(${VULKAN_ICD_FILENAMES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/vulkan/icd.d")
+    set_source_files_properties(${APPLICATION_ICNS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
     set_source_files_properties(${DNN_MODEL_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/models/")
 endif()
 
-add_executable(${target} ${MAIN_SRC_FILES} ${RESOURCE_FILES} ${DNN_MODEL_FILES} ${NCNN_FRAMEWORKS} ${VULKAN_ICD_FILENAMES})
+add_executable(${target} 
+    ${MAIN_SRC_FILES} 
+    ${RESOURCE_FILES} 
+    ${DNN_MODEL_FILES} 
+    ${NCNN_FRAMEWORKS} 
+    ${APPLICATION_ICNS}
+    ${VULKAN_ICD_FILENAMES}
+)
+
 target_link_libraries(${target} PRIVATE utils Qt6::Qt6 ncnn_engine)
 
 if (APPLE)
@@ -46,8 +57,8 @@ if (APPLE)
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist
         XCODE_ATTRIBUTE_OTHER_CODE_SIGN_FLAGS "--deep"
         XCODE_ATTRIBUTE_LD_RUNPATH_SEARCH_PATHS "@executable_path/../Frameworks"
-        #MACOSX_PACKAGE_LOCATION Frameworks
-        #XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
+        MACOSX_PACKAGE_LOCATION Frameworks
+        XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
     )
 
     foreach(RES_FILE ${RESOURCE_FILES})
