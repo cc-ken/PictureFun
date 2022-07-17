@@ -29,6 +29,6 @@ int main(int argc, char *argv[])
     
     MainWnd mainwnd(&app);
     mainwnd.show();
-    
+        
     return app.exec();
 }

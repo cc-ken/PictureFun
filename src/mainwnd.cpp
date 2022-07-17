@@ -8,6 +8,9 @@
 #include <QStyle>
 #include <QFileDialog>
 
+#include "ncnn_engine.h"
+#include "ppmatting.h"
+
 using namespace pf;
 
 MainWnd::MainWnd(QApplication *app)
@@ -54,6 +57,13 @@ MainWnd::MainWnd(QApplication *app)
     layout->addWidget(main);
     
     statusBar()->showMessage(PF_TEXT("main.title", "Picture Fun"));
+    
+    NcnnEngine::instance().init();
+}
+
+MainWnd::~MainWnd()
+{
+    NcnnEngine::instance().uninit();
 }
 
 void MainWnd::pixelValue(int x, int y, int r, int g, int b)
@@ -81,6 +91,7 @@ void MainWnd::createMenus()
     editMenu->addSeparator();
     editMenu->addAction(fitAct);
     editMenu->addAction(selectAct);
+    editMenu->addAction(bgRemoveAct);
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
@@ -160,6 +171,12 @@ void MainWnd::createActions()
     toolbar->addAction(selectAct);
     connect(selectAct, &QAction::triggered, this, &MainWnd::select);
 
+    bgRemoveAct = new QAction(tr("BG Remove"), this);
+    bgRemoveAct->setStatusTip(tr("PPMatting to remove background of the picture."));
+    bgRemoveAct->setIcon(QApplication::style()->standardIcon(QStyle::SP_FileLinkIcon));
+    toolbar->addAction(bgRemoveAct);
+    connect(bgRemoveAct, &QAction::triggered, this, &MainWnd::bgRemove);
+
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
     //connect(aboutAct, &QAction::triggered, this, &MainWnd::about);
@@ -170,7 +187,7 @@ void MainWnd::createActions()
 }
 
 void MainWnd::open() {
-    QString imgFile = QFileDialog::getOpenFileName(this, "Open Image Files", ".", tr("Images (*.png *.xpm *.jpg *.bmp);;All Files (*.*)"));
+    QString imgFile = QFileDialog::getOpenFileName(this, "Open Image Files", ".", tr("Images (*.png *.xpm *.jpg *.bmp *.jpeg);;All Files (*.*)"));
     if (imgFile.isEmpty())
         return;
     
@@ -187,4 +204,15 @@ void MainWnd::select() {
 
 void MainWnd::save() {
     //imgView_->roi();
+}
+
+void MainWnd::bgRemove() {
+    PPMattingNCNN* matting = PPMattingNCNN::instance();
+    cv::Mat input = imgView_->mat();
+    if (input.empty()) {
+        LOG_WARN("Please onpen picture to remove backgroound");
+        return;
+    }
+    cv::Mat result = matting->inference(input);
+    imgView_->setMatImage(result);
 }

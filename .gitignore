@@ -2,3 +2,4 @@ build
 .vscode
 conan-center-index
 .DS_Store
+models

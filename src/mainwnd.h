@@ -29,13 +29,14 @@ class MainWnd : public QMainWindow
 Q_OBJECT
 public:
     MainWnd(QApplication *app);
-    virtual ~MainWnd() = default;
+    virtual ~MainWnd();
     
 protected slots:
     void open();
     void fit();
     void select();
     void save();
+    void bgRemove();
     void pixelValue(int x, int y, int r, int g, int b);
     
 protected:
@@ -63,6 +64,7 @@ protected:
     QAction *aboutQtAct;
     QAction *fitAct;
     QAction *selectAct;
+    QAction *bgRemoveAct;
     QLabel *infoLabel;
     QToolBar *toolbar;
 };
