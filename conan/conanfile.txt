@@ -10,3 +10,5 @@
 
 [options]
     opencv:with_ffmpeg=False
+    qt:qtimageformats=True
+    qt:with_libjpeg=libjpeg

@@ -2,5 +2,15 @@
 <texts>
     <main>
         <title>AI 图片编辑</title>
+        <open>打开</open>
+        <save>保存</save>
+        <pallete>背景色</pallete>
+        <fit>适应</fit>
+        <bg_remover>背景移除</bg_remover>
+        <select>选择</select>
+        <file>文件(&F)</file>
+        <edit>编辑(&E)</edit>
+        <help>帮助(&H)</help>
+        <exit>退出(&X)</exit>
     </main>
 </texts>

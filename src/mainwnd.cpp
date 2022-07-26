@@ -7,6 +7,7 @@
 
 #include <QStyle>
 #include <QFileDialog>
+#include <QIcon>
 #include <QColorDialog>
 
 #include "ncnn_engine.h"
@@ -76,7 +77,7 @@ void MainWnd::pixelValue(int x, int y, int r, int g, int b)
 
 void MainWnd::createMenus()
 {
-    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu = menuBar()->addMenu(PF_TEXT("main.file", "&File"));
     fileMenu->addAction(newAct);
     fileMenu->addAction(openAct);
     fileMenu->addAction(saveAct);
@@ -84,7 +85,7 @@ void MainWnd::createMenus()
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
 
-    editMenu = menuBar()->addMenu(tr("&Edit"));
+    editMenu = menuBar()->addMenu(PF_TEXT("main.edit", "&Edit"));
     editMenu->addAction(undoAct);
     editMenu->addAction(redoAct);
     editMenu->addSeparator();
@@ -97,9 +98,14 @@ void MainWnd::createMenus()
     editMenu->addAction(bgRemoveAct);
     editMenu->addAction(bgColorAct);
 
-    helpMenu = menuBar()->addMenu(tr("&Help"));
+    helpMenu = menuBar()->addMenu(PF_TEXT("main.help", "&Help"));
     helpMenu->addAction(aboutAct);
     helpMenu->addAction(aboutQtAct);
+}
+
+QIcon MainWnd::loadIcon(const char* iconName) {
+    QString res = QString::asprintf(":/res/actions/%s/%s", (isDark() ? "white" : "black"), iconName);
+    return QIcon(res);
 }
 
 void MainWnd::createActions()
@@ -109,17 +115,15 @@ void MainWnd::createActions()
     newAct->setStatusTip(tr("Create a new file"));
     //connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
 
-    openAct = new QAction(tr("&Open..."), this);
+    openAct = new QAction(loadIcon("open.ico"), PF_TEXT("main.open", "&Open..."), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
-    openAct->setIcon(QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon));
     connect(openAct, &QAction::triggered, this, &MainWnd::open);
     toolbar->addAction(openAct);
 
-    saveAct = new QAction(tr("&Save"), this);
+    saveAct = new QAction(loadIcon("save.ico"), PF_TEXT("main.save", "&Save"), this);
     saveAct->setShortcuts(QKeySequence::Save);
     saveAct->setStatusTip(tr("Save the document to disk"));
-    saveAct->setIcon(QApplication::style()->standardIcon(QStyle::SP_DialogSaveButton));
     connect(saveAct, &QAction::triggered, this, &MainWnd::save);
     toolbar->addAction(saveAct);
 
@@ -128,7 +132,7 @@ void MainWnd::createActions()
     printAct->setStatusTip(tr("Print the document"));
     //connect(printAct, &QAction::triggered, this, &MainWnd::print);
 
-    exitAct = new QAction(tr("E&xit"), this);
+    exitAct = new QAction(PF_TEXT("main.exit", "E&xit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
     exitAct->setStatusTip(tr("Exit the application"));
     connect(exitAct, &QAction::triggered, this, &QWidget::close);
@@ -161,29 +165,25 @@ void MainWnd::createActions()
                               "selection"));
     //connect(pasteAct, &QAction::triggered, this, &MainWnd::paste);
     
-    fitAct = new QAction(tr("&Fit"), this);
+    fitAct = new QAction(loadIcon("arrow_expand.ico"), PF_TEXT("main.fit", "&Fit"), this);
     fitAct->setStatusTip(tr("Fit the image size to the display window."));
     connect(fitAct, &QAction::triggered, this, &MainWnd::fit);
-    fitAct->setIcon(QApplication::style()->standardIcon(QStyle::SP_DialogResetButton));
     toolbar->addAction(fitAct);
 
-    selectAct = new QAction(tr("Select"), this);
+    selectAct = new QAction(loadIcon("select.ico"), PF_TEXT("main.select", "Select"), this);
     selectAct->setStatusTip(tr("toggle select region and pan the image."));
     selectAct->setCheckable(true);
     selectAct->setChecked(false);
-    selectAct->setIcon(QApplication::style()->standardIcon(QStyle::SP_FileLinkIcon));
     toolbar->addAction(selectAct);
     connect(selectAct, &QAction::triggered, this, &MainWnd::select);
 
-    bgRemoveAct = new QAction(tr("BG Remove"), this);
+    bgRemoveAct = new QAction(loadIcon("bg_remover.ico"), PF_TEXT("main.bg_remover", "BG Remove"), this);
     bgRemoveAct->setStatusTip(tr("PPMatting to remove background of the picture."));
-    bgRemoveAct->setIcon(QApplication::style()->standardIcon(QStyle::SP_FileLinkIcon));
     toolbar->addAction(bgRemoveAct);
     connect(bgRemoveAct, &QAction::triggered, this, &MainWnd::bgRemove);
 
-    bgColorAct = new QAction(tr("BG Color"), this);
+    bgColorAct = new QAction(loadIcon("pallete.ico"), PF_TEXT("main.pallete", "BG Color"), this);
     bgColorAct->setStatusTip(tr("Change the background color."));
-    bgColorAct->setIcon(QApplication::style()->standardIcon(QStyle::SP_ArrowBack));
     toolbar->addAction(bgColorAct);
     connect(bgColorAct, &QAction::triggered, this, &MainWnd::bgColor);
 
@@ -235,6 +235,6 @@ void MainWnd::bgColor()
     if (alpha_.empty() || alpha_.size() != imgView_->origin().size()) {
         return;
     }
-    
+
     imgView_->setMatImage(blend(imgView_->origin(), alpha_, bgColor_));
 }

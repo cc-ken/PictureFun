@@ -43,6 +43,7 @@ protected slots:
 protected:
     void createMenus();
     void createActions();
+    QIcon loadIcon(const char* iconName);
     
     QApplication *application_;
     ImageView *imgView_;

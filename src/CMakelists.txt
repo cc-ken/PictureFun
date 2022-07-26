@@ -5,9 +5,9 @@ set(target ${PROJECT_NAME})
 add_subdirectory(ncnn)
 
 set(QT_DONT_USE_QTGUI ON)
-#set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
-#set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTORCC ON)
 
 include_directories(
     ${CMAKE_CURRENT_LIST_DIR}
@@ -15,7 +15,7 @@ include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/ncnn
 )
 
-file(GLOB MAIN_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
+file(GLOB MAIN_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h ${CMAKE_CURRENT_LIST_DIR}/*.cpp ${CMAKE_CURRENT_LIST_DIR}/*.qrc)
 file(GLOB RESOURCE_FILES ${CMAKE_CURRENT_LIST_DIR}/lang/*.xml)
 
 if (APPLE)
@@ -49,7 +49,7 @@ add_executable(${target}
     ${VULKAN_ICD_FILENAMES}
 )
 
-target_link_libraries(${target} PRIVATE utils Qt6::Qt6 ncnn_engine)
+target_link_libraries(${target} PRIVATE utils Qt6::Gui Qt6::Core Qt6::Widgets Qt6::QTiffPlugin qico ncnn_engine)
 
 if (APPLE)
     set_target_properties(${target} PROPERTIES
@@ -74,6 +74,7 @@ if (APPLE)
         "-framework IOSurface"
         "-framework Metal"
         "-framework QuartzCore"
+        Qt6::QCocoaIntegrationPlugin
         ${NCNN_LIBS}
     )
 endif()

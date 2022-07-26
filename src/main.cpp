@@ -15,6 +15,7 @@ Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 #elif defined(__APPLE__)
 Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
 #endif
+Q_IMPORT_PLUGIN(QICOPlugin)
 
 using namespace pf;
 
@@ -24,9 +25,10 @@ int main(int argc, char *argv[])
     auto textPath = getCurrFilePath() + "/lang/cn.xml";
     LOG_INFO("Loading texts from:" << textPath);
     i18n::i().load(textPath);
-    
+
     QApplication app(argc, argv);
     
+    Q_INIT_RESOURCE(icons);
     MainWnd mainwnd(&app);
     mainwnd.show();
         

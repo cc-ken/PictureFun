@@ -9,37 +9,47 @@
 
 namespace pf
 {
-    std::string getDefaultFolder()
-    {
-        NSError *error;
-        NSFileManager *manager = [NSFileManager defaultManager];
-        NSURL *userLibrary = [manager URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:false error:&error];
-        
-        NSString *myString = [userLibrary path];
-        
-        return [myString UTF8String];
-    }
+std::string getDefaultFolder()
+{
+    NSError *error;
+    NSFileManager *manager = [NSFileManager defaultManager];
+    NSURL *userLibrary = [manager URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:false error:&error];
     
-    std::string getCurrFilePath()
-    {
-        @autoreleasepool {
-            NSString *currentpath = [[NSBundle mainBundle] bundlePath];
-            
-            return std::string([currentpath UTF8String]) + "/Contents";
-        }
-    }
+    NSString *myString = [userLibrary path];
     
-    void getScreenResolution(int &width, int &height) {
-        NSRect screenSize = [[NSScreen mainScreen] frame];
-        
-        width = screenSize.size.width;
-        height = screenSize.size.height;
-    }
+    return [myString UTF8String];
+}
 
-    void shellExec(const std::string& docPath)
-    {
-        NSString *docPathStr = [NSString stringWithCString: docPath.c_str() encoding:[NSString defaultCStringEncoding]];
-        NSURL *docUrl = [NSURL fileURLWithPath: docPathStr];
-        [[NSWorkspace sharedWorkspace] openURL: docUrl];
+std::string getCurrFilePath()
+{
+    @autoreleasepool {
+        NSString *currentpath = [[NSBundle mainBundle] bundlePath];
+        
+        return std::string([currentpath UTF8String]) + "/Contents";
     }
+}
+
+void getScreenResolution(int &width, int &height) {
+    NSRect screenSize = [[NSScreen mainScreen] frame];
+    
+    width = screenSize.size.width;
+    height = screenSize.size.height;
+}
+
+void shellExec(const std::string& docPath)
+{
+    NSString *docPathStr = [NSString stringWithCString: docPath.c_str() encoding:[NSString defaultCStringEncoding]];
+    NSURL *docUrl = [NSURL fileURLWithPath: docPathStr];
+    [[NSWorkspace sharedWorkspace] openURL: docUrl];
+}
+
+bool isDark() {
+    if (__builtin_available(macOS 10.14, *)) {
+        auto appearance = [NSApp.effectiveAppearance bestMatchFromAppearancesWithNames:
+                @[NSAppearanceNameAqua, NSAppearanceNameDarkAqua]];
+        return [appearance isEqualToString: NSAppearanceNameDarkAqua];
+    }
+    return false;
+}
+
 }

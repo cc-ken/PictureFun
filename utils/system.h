@@ -12,4 +12,6 @@ namespace pf
 	void getScreenResolution(int &width, int &height);
 
 	void shellExec(const std::string& docPath);
+
+    bool isDark();
 }

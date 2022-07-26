@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/actions/white/arrow_expand.ico</file>
+        <file>res/actions/white/open.ico</file>
+        <file>res/actions/white/save.ico</file>
+        <file>res/actions/white/zoom_in.ico</file>
+        <file>res/actions/white/zoom_out.ico</file>
+        <file>res/actions/white/select.ico</file>
+        <file>res/actions/white/bg_remover.ico</file>
+        <file>res/actions/white/pallete.ico</file>
+        <file>res/actions/black/arrow_expand.ico</file>
+        <file>res/actions/black/open.ico</file>
+        <file>res/actions/black/save.ico</file>
+        <file>res/actions/black/zoom_in.ico</file>
+        <file>res/actions/black/zoom_out.ico</file>
+        <file>res/actions/black/select.ico</file>
+        <file>res/actions/black/bg_remover.ico</file>
+        <file>res/actions/black/pallete.ico</file>
+    </qresource>
+</RCC>
