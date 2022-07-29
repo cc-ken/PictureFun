@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ppmatting.h"
+#include "realesrgan.h"
 
 namespace pf {
 

@@ -12,6 +12,7 @@
 
 #include "ncnn_engine.h"
 #include "ppmatting.h"
+#include "realesrgan.h"
 #include "imgproc.h"
 
 using namespace pf;
@@ -186,6 +187,11 @@ void MainWnd::createActions()
     bgColorAct->setStatusTip(tr("Change the background color."));
     toolbar->addAction(bgColorAct);
     connect(bgColorAct, &QAction::triggered, this, &MainWnd::bgColor);
+    
+    srAct = new QAction(loadIcon("zoom_in.ico"), PF_TEXT("main.sr", "Super Resolution"), this);
+    srAct->setStatusTip(tr("Do super resolution with realESRGAN"));
+    toolbar->addAction(srAct);
+    connect(srAct, &QAction::triggered, this, &MainWnd::onSR);
 
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
@@ -225,6 +231,18 @@ void MainWnd::bgRemove() {
     }
     alpha_ = matting->inference(input);
     imgView_->setMatImage(blend(imgView_->origin(), alpha_, bgColor_));
+}
+
+void MainWnd::onSR() {
+    RealESRGAN* sr = RealESRGAN::instance();
+    cv::Mat input = imgView_->mat();
+    if (input.empty()) {
+        LOG_WARN("Please onpen picture to do super resolution");
+        return;
+    }
+    sr->init(4);
+    auto upscaled = sr->inference(input);
+    imgView_->setMatImage(upscaled);
 }
 
 void MainWnd::bgColor()

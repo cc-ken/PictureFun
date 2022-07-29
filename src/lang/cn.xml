@@ -7,6 +7,7 @@
         <pallete>背景色</pallete>
         <fit>适应</fit>
         <bg_remover>背景移除</bg_remover>
+        <sr>超分</sr>
         <select>选择</select>
         <file>文件(&F)</file>
         <edit>编辑(&E)</edit>

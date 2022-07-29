@@ -8,7 +8,6 @@ namespace pf {
 
 class PPMattingNCNN {
 public:
-    PPMattingNCNN() = default;
     virtual ~PPMattingNCNN() = default;
 
 public:
@@ -19,6 +18,9 @@ public:
     virtual int init() = 0;
     
     virtual void uninit() = 0;
+
+protected:
+    PPMattingNCNN() = default;
 };
 
 }

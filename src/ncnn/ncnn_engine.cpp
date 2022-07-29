@@ -20,6 +20,7 @@ int NcnnEngine::init()
 int NcnnEngine::uninit()
 {
     PPMattingNCNN::instance()->uninit();
+    RealESRGAN::instance()->uninit();
 
     ncnn::destroy_gpu_instance();
     return 0;
