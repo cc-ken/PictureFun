@@ -1,9 +1,9 @@
 #include "ppmatting.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 // ncnn
 #include "net.h"
 #include "benchmark.h"
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 
 #include "utils/system.h"
 #include "utils/logger.h"

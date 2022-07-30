@@ -1,5 +1,6 @@
 #include "imageview.h"
 #include "utils/logger.h"
+#include "utils/strings.h"
 
 #include <QStyleOption>
 #include <QPainter>
@@ -21,6 +22,10 @@ ImageView::ImageView(QWidget *parent) : QLabel(parent), scale_(1.0f), zoom_(1.0f
 int ImageView::loadImageFile(QString strFileName)
 {
     std::string filename = strFileName.toStdString();
+#if defined(_WINDOWS)
+    //Windows still use ansi for OpenCV to open the file, QT uses unicode/UTF8
+    filename = pf::s2ls(filename);
+#endif
     cv::Mat img = cv::imread(filename, cv::IMREAD_UNCHANGED);
     imgLoaded_ = img.clone();
 
@@ -110,6 +115,8 @@ bool ImageView::zoom(float factor)
     zoom_ *= factor;
     
     update();
+
+    return true;
 }
 
 bool ImageView::pinchTriggered(QPinchGesture *event)

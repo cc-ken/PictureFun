@@ -2,6 +2,9 @@
 
 #include "realesrgan.h"
 
+#include "utils/system.h"
+#include "utils/logger.h"
+
 // ncnn
 #include "net.h"
 #include "gpu.h"
@@ -9,9 +12,6 @@
 
 #include <algorithm>
 #include <vector>
-
-#include "utils/system.h"
-#include "utils/logger.h"
 
 namespace pf
 {
@@ -226,10 +226,10 @@ public:
 
         //#pragma omp parallel for num_threads(2)
         for (int yi = 0; yi < ytiles; yi++) {
-            const int tile_h_nopad = std::min((yi + 1) * TILE_SIZE_Y, h) - yi * TILE_SIZE_Y;
+            const int tile_h_nopad = (std::min)((yi + 1) * TILE_SIZE_Y, h) - yi * TILE_SIZE_Y;
 
-            int in_tile_y0 = std::max(yi * TILE_SIZE_Y - prepadding, 0);
-            int in_tile_y1 = std::min((yi + 1) * TILE_SIZE_Y + prepadding, h);
+            int in_tile_y0 = (std::max)(yi * TILE_SIZE_Y - prepadding, 0);
+            int in_tile_y1 = (std::min)((yi + 1) * TILE_SIZE_Y + prepadding, h);
 
             ncnn::Mat in;
             if (opt.use_fp16_storage && opt.use_int8_storage) {
@@ -257,8 +257,8 @@ public:
                 }
             }
 
-            int out_tile_y0 = std::max(yi * TILE_SIZE_Y, 0);
-            int out_tile_y1 = std::min((yi + 1) * TILE_SIZE_Y, h);
+            int out_tile_y0 = (std::max)(yi * TILE_SIZE_Y, 0);
+            int out_tile_y1 = (std::min)((yi + 1) * TILE_SIZE_Y, h);
 
             ncnn::VkMat out_gpu;
             if (opt.use_fp16_storage && opt.use_int8_storage) {
@@ -269,7 +269,7 @@ public:
             }
 
             for (int xi = 0; xi < xtiles; xi++) {
-                const int tile_w_nopad = std::min((xi + 1) * TILE_SIZE_X, w) - xi * TILE_SIZE_X;
+                const int tile_w_nopad = (std::min)((xi + 1) * TILE_SIZE_X, w) - xi * TILE_SIZE_X;
 
                 if (tta_mode) {
                     // preproc
@@ -278,9 +278,9 @@ public:
                     {
                         // crop tile
                         int tile_x0 = xi * TILE_SIZE_X - prepadding;
-                        int tile_x1 = std::min((xi + 1) * TILE_SIZE_X, w) + prepadding;
+                        int tile_x1 = (std::min)((xi + 1) * TILE_SIZE_X, w) + prepadding;
                         int tile_y0 = yi * TILE_SIZE_Y - prepadding;
-                        int tile_y1 = std::min((yi + 1) * TILE_SIZE_Y, h) + prepadding;
+                        int tile_y1 = (std::min)((yi + 1) * TILE_SIZE_Y, h) + prepadding;
 
                         in_tile_gpu[0].create(tile_x1 - tile_x0, tile_y1 - tile_y0, 3, in_out_tile_elemsize, 1, blob_vkallocator);
                         in_tile_gpu[1].create(tile_x1 - tile_x0, tile_y1 - tile_y0, 3, in_out_tile_elemsize, 1, blob_vkallocator);
@@ -318,7 +318,7 @@ public:
                         constants[6].i = prepadding;
                         constants[7].i = prepadding;
                         constants[8].i = xi * TILE_SIZE_X;
-                        constants[9].i = std::min(yi * TILE_SIZE_Y, prepadding);
+                        constants[9].i = (std::min)(yi * TILE_SIZE_Y, prepadding);
                         constants[10].i = channels;
                         constants[11].i = in_alpha_tile_gpu.w;
                         constants[12].i = in_alpha_tile_gpu.h;
@@ -394,7 +394,7 @@ public:
                         constants[4].i = out_gpu.h;
                         constants[5].i = out_gpu.cstep;
                         constants[6].i = xi * TILE_SIZE_X * scale;
-                        constants[7].i = std::min(TILE_SIZE_X * scale, out_gpu.w - xi * TILE_SIZE_X * scale);
+                        constants[7].i = (std::min)(TILE_SIZE_X * scale, out_gpu.w - xi * TILE_SIZE_X * scale);
                         constants[8].i = prepadding * scale;
                         constants[9].i = prepadding * scale;
                         constants[10].i = channels;
@@ -402,7 +402,7 @@ public:
                         constants[12].i = out_alpha_tile_gpu.h;
 
                         ncnn::VkMat dispatcher;
-                        dispatcher.w = std::min(TILE_SIZE_X * scale, out_gpu.w - xi * TILE_SIZE_X * scale);
+                        dispatcher.w = (std::min)(TILE_SIZE_X * scale, out_gpu.w - xi * TILE_SIZE_X * scale);
                         dispatcher.h = out_gpu.h;
                         dispatcher.c = channels;
 
@@ -417,9 +417,9 @@ public:
                     {
                         // crop tile
                         int tile_x0 = xi * TILE_SIZE_X - prepadding;
-                        int tile_x1 = std::min((xi + 1) * TILE_SIZE_X, w) + prepadding;
+                        int tile_x1 = (std::min)((xi + 1) * TILE_SIZE_X, w) + prepadding;
                         int tile_y0 = yi * TILE_SIZE_Y - prepadding;
-                        int tile_y1 = std::min((yi + 1) * TILE_SIZE_Y, h) + prepadding;
+                        int tile_y1 = (std::min)((yi + 1) * TILE_SIZE_Y, h) + prepadding;
 
                         in_tile_gpu.create(tile_x1 - tile_x0, tile_y1 - tile_y0, 3, in_out_tile_elemsize, 1, blob_vkallocator);
 
@@ -443,7 +443,7 @@ public:
                         constants[6].i = prepadding;
                         constants[7].i = prepadding;
                         constants[8].i = xi * TILE_SIZE_X;
-                        constants[9].i = std::min(yi * TILE_SIZE_Y, prepadding);
+                        constants[9].i = (std::min)(yi * TILE_SIZE_Y, prepadding);
                         constants[10].i = channels;
                         constants[11].i = in_alpha_tile_gpu.w;
                         constants[12].i = in_alpha_tile_gpu.h;

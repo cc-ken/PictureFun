@@ -21,7 +21,13 @@ using namespace pf;
 
 int main(int argc, char *argv[])
 {
-    Logger::i().init();
+    int target = Logger::eLogFile;
+#if defined(_WINDOWS)
+    target |= Logger::eLogMSVC;
+#else
+    target |= Logger::eLogSys;
+#endif
+    Logger::i().init(target);
     auto textPath = getCurrFilePath() + "/lang/cn.xml";
     LOG_INFO("Loading texts from:" << textPath);
     i18n::i().load(textPath);

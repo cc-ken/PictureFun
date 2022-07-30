@@ -6,7 +6,7 @@
     ncnn/1.0.0@pf/stable
 
 [generators]
-    cmake_find_package
+    cmake_find_package_multi
 
 [options]
     opencv:with_ffmpeg=False

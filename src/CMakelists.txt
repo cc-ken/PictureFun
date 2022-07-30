@@ -40,7 +40,23 @@ if (APPLE)
     set_source_files_properties(${DNN_MODEL_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/models/")
 endif()
 
-add_executable(${target} 
+if (MSVC)
+    set(EXECUTABLE_TYPE "WIN32")
+    include(../cmake/generate_product_version.cmake)
+    generate_product_version(
+        RESOURCE_FILES
+        NAME "PictureFun"
+        ICON ${CMAKE_CURRENT_LIST_DIR}/res/PictureFun.ico
+        VERSION_MAJOR 1
+        VERSION_MINOR 0
+        VERSION_REVISION 1000
+        COMPANY_NAME "AI-Double Co.Ltd"
+        COMPANY_COPYRIGHT "AI-Double (C) 2022-2023"
+        FILE_DESCRIPTION "Picture Fun editor powered by AI"
+    )
+endif()
+
+add_executable(${target} ${EXECUTABLE_TYPE}
     ${MAIN_SRC_FILES} 
     ${RESOURCE_FILES} 
     ${DNN_MODEL_FILES} 
@@ -80,5 +96,31 @@ if (APPLE)
 endif()
 
 if(MSVC)
+    target_link_libraries(${target} PRIVATE Qt6::QWindowsIntegrationPlugin Dwrite)
     target_link_options(${target} PUBLIC /DEBUG)
+
+    add_custom_command(
+        TARGET ${PROJECT_NAME} 
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/lang
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/lang
+    )
+
+    add_custom_command(
+        TARGET ${PROJECT_NAME} 
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/models
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/Resources/models
+    )
+
+    add_custom_command(
+        TARGET ${PROJECT_NAME} 
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${ncnn_LIB_DIRS}/../bin/ncnn.dll
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/ncnn.dll
+    )
+
 endif()

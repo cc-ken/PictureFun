@@ -3,3 +3,7 @@ sources:
     url: "https://github.com/Tencent/ncnn/releases/download/20220701/ncnn-20220701-macos-vulkan.zip"
     #url: "http://localhost:9000/ncnn-20220701-macos-vulkan.zip"
     sha256: "cedc16a09ba9c55153f148bd6f6781d2099c6f13a040d12925b1fdf12da65b59"
+  "1.0.0_Windows_vulkan":
+    #url: "https://github.com/Tencent/ncnn/releases/download/20220729/ncnn-20220729-windows-vs2022-shared.zip"
+    url: "http://localhost:9000/ncnn-20220729-windows-vs2022-shared.zip"
+    sha256: "b404f421a0db41a07d7648218d0323a68fed48fd84bc59a4cfca362810db9ad7"

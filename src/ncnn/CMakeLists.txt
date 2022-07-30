@@ -9,6 +9,10 @@ include_directories(
     ${CMAKE_BINARY_DIR}
 )
 
+if (MSVC)
+    add_definitions(-DNOMINMAX)
+endif()
+
 file(GLOB GSLANG_COMP_FILES ${CMAKE_CURRENT_LIST_DIR}/*.comp)
 foreach(COMP_FILE ${GSLANG_COMP_FILES})
     get_filename_component(COMP_FILENAME ${COMP_FILE} NAME_WLE)
@@ -42,4 +46,4 @@ file(GLOB NCNN_ENGINE_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h ${CMAKE_CURRENT_LI
 
 add_library(${target} STATIC ${NCNN_ENGINE_SRC_FILES})
 
-target_link_libraries(${target} PUBLIC utils)
+target_link_libraries(${target} PUBLIC utils ncnn::ncnn opencv::opencv)
