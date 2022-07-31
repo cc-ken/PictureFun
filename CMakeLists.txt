@@ -5,6 +5,7 @@ project(PictureFunWorkspace)
 include(cmake/predefines.cmake)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/conan/${TARGET_OS}")
+set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/conan/${TARGET_OS}")
 
 find_package(OpenCV REQUIRED)
 find_package(Qt6 REQUIRED)

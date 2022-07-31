@@ -91,9 +91,15 @@ bool ImageView::panTriggered(QPanGesture *event)
 
 void ImageView::wheelEvent(QWheelEvent *event)
 {
+#if !defined(__APPLE__)
+    int delta = event->angleDelta().y();
+    float ratio = 0.1;
+#else
     int delta = event->pixelDelta().y();
+    float ratio = 0.02;
+#endif
     if (delta != 0) {
-        float factor = 1 + (0.02 * delta / fabs(delta));
+        float factor = 1 + (ratio * delta / fabs(delta));
         //LOG_INFO("wheel zoom=" << factor << ", delta=" << delta);
         zoom(factor);
     }
