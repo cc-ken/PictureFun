@@ -73,27 +73,20 @@ MainWnd::~MainWnd()
 
 void MainWnd::pixelValue(int x, int y, int r, int g, int b)
 {
+#if !defined(NDEBUG)
     statusBar()->showMessage(QString::asprintf("[%d,%d] (r=%d,g=%d,b=%d)", x, y, r, g, b));
+#endif
 }
 
 void MainWnd::createMenus()
 {
     fileMenu = menuBar()->addMenu(PF_TEXT("main.file", "&File"));
-    fileMenu->addAction(newAct);
     fileMenu->addAction(openAct);
     fileMenu->addAction(saveAct);
-    fileMenu->addAction(printAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
 
     editMenu = menuBar()->addMenu(PF_TEXT("main.edit", "&Edit"));
-    editMenu->addAction(undoAct);
-    editMenu->addAction(redoAct);
-    editMenu->addSeparator();
-    editMenu->addAction(cutAct);
-    editMenu->addAction(copyAct);
-    editMenu->addAction(pasteAct);
-    editMenu->addSeparator();
     editMenu->addAction(fitAct);
     editMenu->addAction(selectAct);
     editMenu->addAction(bgRemoveAct);
@@ -111,99 +104,61 @@ QIcon MainWnd::loadIcon(const char* iconName) {
 
 void MainWnd::createActions()
 {
-    newAct = new QAction(tr("&New"), this);
-    newAct->setShortcuts(QKeySequence::New);
-    newAct->setStatusTip(tr("Create a new file"));
-    //connect(newAct, &QAction::triggered, this, &MainWindow::newFile);
-
     openAct = new QAction(loadIcon("open.ico"), PF_TEXT("main.open", "&Open..."), this);
     openAct->setShortcuts(QKeySequence::Open);
-    openAct->setStatusTip(tr("Open an existing file"));
+    openAct->setStatusTip(PF_TEXT("tips.open", "Open an existing file"));
     connect(openAct, &QAction::triggered, this, &MainWnd::open);
     toolbar->addAction(openAct);
 
     saveAct = new QAction(loadIcon("save.ico"), PF_TEXT("main.save", "&Save"), this);
     saveAct->setShortcuts(QKeySequence::Save);
-    saveAct->setStatusTip(tr("Save the document to disk"));
+    saveAct->setStatusTip(PF_TEXT("tips.save", "Save the document to disk"));
     connect(saveAct, &QAction::triggered, this, &MainWnd::save);
     toolbar->addAction(saveAct);
 
-    printAct = new QAction(tr("&Print..."), this);
-    printAct->setShortcuts(QKeySequence::Print);
-    printAct->setStatusTip(tr("Print the document"));
-    //connect(printAct, &QAction::triggered, this, &MainWnd::print);
-
     exitAct = new QAction(PF_TEXT("main.exit", "E&xit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
-    exitAct->setStatusTip(tr("Exit the application"));
+    exitAct->setStatusTip(PF_TEXT("tips.exit", "Exit the application"));
     connect(exitAct, &QAction::triggered, this, &QWidget::close);
-
-    undoAct = new QAction(tr("&Undo"), this);
-    undoAct->setShortcuts(QKeySequence::Undo);
-    undoAct->setStatusTip(tr("Undo the last operation"));
-    //connect(undoAct, &QAction::triggered, this, &MainWnd::undo);
-
-    redoAct = new QAction(tr("&Redo"), this);
-    redoAct->setShortcuts(QKeySequence::Redo);
-    redoAct->setStatusTip(tr("Redo the last operation"));
-    //connect(redoAct, &QAction::triggered, this, &MainWnd::redo);
-
-    cutAct = new QAction(tr("Cu&t"), this);
-    cutAct->setShortcuts(QKeySequence::Cut);
-    cutAct->setStatusTip(tr("Cut the current selection's contents to the "
-                            "clipboard"));
-    //connect(cutAct, &QAction::triggered, this, &MainWnd::cut);
-
-    copyAct = new QAction(tr("&Copy"), this);
-    copyAct->setShortcuts(QKeySequence::Copy);
-    copyAct->setStatusTip(tr("Copy the current selection's contents to the "
-                             "clipboard"));
-    //connect(copyAct, &QAction::triggered, this, &MainWnd::copy);
-
-    pasteAct = new QAction(tr("&Paste"), this);
-    pasteAct->setShortcuts(QKeySequence::Paste);
-    pasteAct->setStatusTip(tr("Paste the clipboard's contents into the current "
-                              "selection"));
-    //connect(pasteAct, &QAction::triggered, this, &MainWnd::paste);
     
     fitAct = new QAction(loadIcon("arrow_expand.ico"), PF_TEXT("main.fit", "&Fit"), this);
-    fitAct->setStatusTip(tr("Fit the image size to the display window."));
+    fitAct->setStatusTip(PF_TEXT("tips.fit", "Fit the image size to the display window."));
     connect(fitAct, &QAction::triggered, this, &MainWnd::fit);
     toolbar->addAction(fitAct);
 
     selectAct = new QAction(loadIcon("select.ico"), PF_TEXT("main.select", "Select"), this);
-    selectAct->setStatusTip(tr("toggle select region and pan the image."));
+    selectAct->setStatusTip(PF_TEXT("tips.select", "toggle select region and pan the image."));
     selectAct->setCheckable(true);
     selectAct->setChecked(false);
-    toolbar->addAction(selectAct);
+    //toolbar->addAction(selectAct);
     connect(selectAct, &QAction::triggered, this, &MainWnd::select);
 
     bgRemoveAct = new QAction(loadIcon("bg_remover.ico"), PF_TEXT("main.bg_remover", "BG Remove"), this);
-    bgRemoveAct->setStatusTip(tr("PPMatting to remove background of the picture."));
+    bgRemoveAct->setStatusTip(PF_TEXT("tips.bg_remover", "PPMatting to remove background of the picture."));
     toolbar->addAction(bgRemoveAct);
     connect(bgRemoveAct, &QAction::triggered, this, &MainWnd::bgRemove);
 
     bgColorAct = new QAction(loadIcon("pallete.ico"), PF_TEXT("main.pallete", "BG Color"), this);
-    bgColorAct->setStatusTip(tr("Change the background color."));
+    bgColorAct->setStatusTip(PF_TEXT("tips.pallete", "Change the background color."));
     toolbar->addAction(bgColorAct);
     connect(bgColorAct, &QAction::triggered, this, &MainWnd::bgColor);
     
     srAct = new QAction(loadIcon("zoom_in.ico"), PF_TEXT("main.sr", "Super Resolution"), this);
-    srAct->setStatusTip(tr("Do super resolution with realESRGAN"));
+    srAct->setStatusTip(PF_TEXT("tips.sr", "Do super resolution with realESRGAN"));
     toolbar->addAction(srAct);
     connect(srAct, &QAction::triggered, this, &MainWnd::onSR);
 
-    aboutAct = new QAction(tr("&About"), this);
-    aboutAct->setStatusTip(tr("Show the application's About box"));
+    aboutAct = new QAction(PF_TEXT("main.about", "&About"), this);
+    aboutAct->setStatusTip(PF_TEXT("main.about", "Show the application's About box"));
     //connect(aboutAct, &QAction::triggered, this, &MainWnd::about);
     
-    aboutQtAct = new QAction(tr("About &Qt"), this);
-    aboutQtAct->setStatusTip(tr("Show the Qt library's About box"));
+    aboutQtAct = new QAction(PF_TEXT("main.about_qt", "About &Qt"), this);
+    aboutQtAct->setStatusTip(PF_TEXT("main.about_qt", "Show the Qt library's About box"));
     connect(aboutQtAct, &QAction::triggered, application_, &QApplication::aboutQt);
 }
 
 void MainWnd::open() {
-    QString imgFile = QFileDialog::getOpenFileName(this, "Open Image Files", ".", tr("Images (*.png *.xpm *.jpg *.bmp *.jpeg);;All Files (*.*)"));
+    QString imgFile = QFileDialog::getOpenFileName(this, PF_TEXT("titles.open_file", "Open Image Files"), ".", tr("Images (*.png *.xpm *.jpg *.bmp *.jpeg);;All Files (*.*)"));
     if (imgFile.isEmpty())
         return;
     
@@ -219,7 +174,15 @@ void MainWnd::select() {
 }
 
 void MainWnd::save() {
-    //imgView_->roi();
+    QString imgFile = QFileDialog::getSaveFileName(this, PF_TEXT("titles.save_file", "Save Image Files"), ".", tr("Images (*.png *.jpg)"));
+    if (imgFile.isEmpty())
+        return;
+
+    bool result = imgView_->save(imgFile);
+    if (result) {
+        auto resultString = QString(PF_TEXT("tips.saved", "file has been saved to ")) + imgFile;
+        statusBar()->showMessage(resultString);
+    }
 }
 
 void MainWnd::bgRemove() {
@@ -242,7 +205,7 @@ void MainWnd::onSR() {
     }
     sr->init(4);
     auto upscaled = sr->inference(input);
-    imgView_->setMatImage(upscaled);
+    imgView_->setMatImage(upscaled, false, true);
 }
 
 void MainWnd::bgColor()

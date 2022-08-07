@@ -13,5 +13,23 @@
         <edit>编辑(&E)</edit>
         <help>帮助(&H)</help>
         <exit>退出(&X)</exit>
+        <about>关于</about>
+        <about_qt>关于QT</about_qt>
     </main>
+    <titles>
+        <open_file>选择要打开的图片文件</open_file>
+        <save_file>选择要保存的图片文件</save_file>
+    </titles>
+    <tips>
+        <open>打开文件对话框选择需要处理的图片，也可以拖拽到窗口打开</open>
+        <save>另存修改后的图片</save>
+        <pallete>选择合适的背景色</pallete>
+        <bg_remover>一键抠图</bg_remover>
+        <sr>将低分辨率的图片变得高清</sr>
+        <select>选择图片区域</select>
+        <exit>退出程序</exit>
+        <fit>图片尺寸自适应窗口</fit>
+        <about>关于AI 图片编辑器</about>
+        <saved>文件成功的保存到：</saved>
+    </tips>
 </texts>

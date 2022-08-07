@@ -28,8 +28,9 @@ public:
     ~ImageView() = default;
     
 public:
-    void setMatImage(const cv::Mat& mat, bool nocopy = false);
+    void setMatImage(const cv::Mat& mat, bool nocopy = false, bool isOrigin = false);
     int loadImageFile(QString strFileName);
+    bool save(QString strFileName);
     cv::Mat mat() const {
         return imgOrigin_;
     }

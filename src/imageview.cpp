@@ -9,10 +9,10 @@
 
 ImageView::ImageView(QWidget *parent) : QLabel(parent), scale_(1.0f), zoom_(1.0f)
 {
-    QPalette palette;
-    palette.setColor(QPalette::Normal, QPalette::Window, QColor(0, 0, 0));
-    setAutoFillBackground(true);
-    setPalette(palette);
+    //QPalette palette;
+    //palette.setColor(QPalette::Normal, QPalette::Window, QColor(0, 0, 0));
+    //setAutoFillBackground(true);
+    //setPalette(palette);
     grabGesture(Qt::PanGesture);
     grabGesture(Qt::PinchGesture);
     setAcceptDrops(true);
@@ -34,7 +34,21 @@ int ImageView::loadImageFile(QString strFileName)
     return 0;
 }
 
-void ImageView::setMatImage(const cv::Mat &mat, bool nocopy)
+bool ImageView::save(QString strFileName)
+{
+    if (imgOrigin_.empty()) {
+        LOG_WARN("nothing to save");
+        return false;
+    }
+    std::string filename = strFileName.toStdString();
+#if defined(_WINDOWS)
+    //Windows still use ansi for OpenCV to open the file, QT uses unicode/UTF8
+    filename = pf::s2ls(filename);
+#endif
+    return cv::imwrite(filename, imgOrigin_);
+}
+
+void ImageView::setMatImage(const cv::Mat &mat, bool nocopy, bool isOrigin)
 {
     if (mat.empty()) {
         return;
@@ -45,6 +59,9 @@ void ImageView::setMatImage(const cv::Mat &mat, bool nocopy)
     } else {
         imgOrigin_ = mat;
     }
+
+    if (isOrigin)
+        imgLoaded_ = imgOrigin_.clone();
 
     int nChannels = mat.channels();
     if (nChannels == 1) {
@@ -91,13 +108,20 @@ bool ImageView::panTriggered(QPanGesture *event)
 
 void ImageView::wheelEvent(QWheelEvent *event)
 {
-#if !defined(__APPLE__)
-    int delta = event->angleDelta().y();
-    float ratio = 0.1;
-#else
-    int delta = event->pixelDelta().y();
-    float ratio = 0.02;
-#endif
+    int delta = 0;
+    float ratio = 0.1f;
+    if (event->angleDelta().y() != 0) {
+        delta = event->angleDelta().y();
+        ratio = 0.1f;
+    }
+    else if (event->pixelDelta().y() != 0) {
+        delta = event->pixelDelta().y();
+        ratio = 0.02f;
+    }
+    else {
+        LOG_ERROR("wheel event, delta is 0!@!!");
+    }
+
     if (delta != 0) {
         float factor = 1 + (ratio * delta / fabs(delta));
         //LOG_INFO("wheel zoom=" << factor << ", delta=" << delta);
