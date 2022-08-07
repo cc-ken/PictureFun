@@ -102,6 +102,32 @@ QIcon MainWnd::loadIcon(const char* iconName) {
     return QIcon(res);
 }
 
+void MainWnd::about() {
+    QMessageBox* msgBox = new QMessageBox{ this };
+    msgBox->setAttribute(Qt::WA_DeleteOnClose);
+    msgBox->setWindowTitle(PF_TEXT("titles.about", "About PictureFun"));
+    msgBox->setText(QString("<h3>") + PF_TEXT("titles.about", "About PictureFun") + "</h3>");
+    const char* aboutInfo = "%s<br>%s<p>%s</p><p>%s</p><p><a href='%s'>%s</a></p><p><b>%s</b></p><p><b>%s</b></p>";
+    QString allAboutInfo = QString::asprintf(aboutInfo,
+        PF_TEXT("about.version", "Version: 0.1"),
+        PF_TEXT("about.publish", "Publish at 2022-8-31"),
+        PF_TEXT("about.desc", "It is an opensource project assembling some fun AI functions into a GUI program and let people to easy access."),
+        PF_TEXT("about.vendor", "It uses QT as GUI, OpenCV for basic image processing, NCNN+Vulkan as AI inference engine, Currently pretrained HRNet and RealESRGan network are used."),
+        PF_TEXT("about.link", "https://github.com/cc-ken/PictureFun"),
+        PF_TEXT("about.link", "https://github.com/cc-ken/PictureFun"),
+        PF_TEXT("about.author", "Author: cc-ken"),
+        PF_TEXT("about.license", "License: GPLv3")
+        );
+    msgBox->setInformativeText(allAboutInfo);
+
+    QPixmap pm(":/res/PictureFun");
+    if (!pm.isNull())
+        msgBox->setIconPixmap(pm);
+
+    msgBox->show();
+    msgBox->exec();
+}
+
 void MainWnd::createActions()
 {
     openAct = new QAction(loadIcon("open.ico"), PF_TEXT("main.open", "&Open..."), this);
@@ -150,7 +176,7 @@ void MainWnd::createActions()
 
     aboutAct = new QAction(PF_TEXT("main.about", "&About"), this);
     aboutAct->setStatusTip(PF_TEXT("main.about", "Show the application's About box"));
-    //connect(aboutAct, &QAction::triggered, this, &MainWnd::about);
+    connect(aboutAct, &QAction::triggered, this, &MainWnd::about);
     
     aboutQtAct = new QAction(PF_TEXT("main.about_qt", "About &Qt"), this);
     aboutQtAct->setStatusTip(PF_TEXT("main.about_qt", "Show the Qt library's About box"));

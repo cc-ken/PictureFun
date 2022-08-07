@@ -40,6 +40,7 @@ protected slots:
     void bgColor();
     void onSR();
     void pixelValue(int x, int y, int r, int g, int b);
+    void about();
     
 protected:
     void createMenus();

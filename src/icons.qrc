@@ -16,5 +16,6 @@
         <file>res/actions/black/select.ico</file>
         <file>res/actions/black/bg_remover.ico</file>
         <file>res/actions/black/pallete.ico</file>
+        <file>res/PictureFun.png</file>
     </qresource>
 </RCC>
