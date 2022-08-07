@@ -23,11 +23,12 @@ Install conan by pip: `pip3 install conan`
     # install opencv/qt dependency
     cd ../../../
     mkdir Windows
+    cd Windows
     conan install ../ -s compiler="Visual Studio" -s compiler.runtime=MDd -s build_type=Debug -s arch=x86_64 --build=missing
     conan install ../ -s compiler="Visual Studio" -s compiler.runtime=MD -s build_type=Release -s arch=x86_64 --build=missing
 
     # create visual studio projects
-    cd ..
+    cd ../..
     mkdir build
     cd build
     cmake .. -G"Visual Studio 17 2022"
