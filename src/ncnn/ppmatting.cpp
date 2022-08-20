@@ -39,7 +39,7 @@ public:
         
         ncnn::Option opt;
         opt.lightmode = true;
-        opt.num_threads = 4;
+        //opt.num_threads = 4;
         opt.blob_allocator = &g_blob_pool_allocator;
         opt.workspace_allocator = &g_workspace_pool_allocator;
 

@@ -14,6 +14,22 @@ Install conan by pip: `pip3 install conan`
 
 ### Macos
 
+    # build ncnn conan dependency
+    cd conan/recipes/ncnn/all
+    conan create ./ ncnn/1.0.0@pf/stable -s os=Macos
+
+    # install opencv/qt dependency
+    cd ../../../
+    mkdir Macos
+    cd Macos
+    conan install ../ -s os=Macos --build=missing
+
+    # create Xcode projects
+    cd ../..
+    mkdir build
+    cd build
+    cmake .. -G Xcode
+
 ### Windows
 
     # build ncnn conan dependency
