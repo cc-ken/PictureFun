@@ -13,7 +13,7 @@ class NcnnConan(ConanFile):
     homepage = "https://github.com/Tencent/ncnn"
     license = "BSD"
 
-    settings = "os"
+    settings = "os", "arch"
     options = {
         "with_vulkan": [True, False]
     }
