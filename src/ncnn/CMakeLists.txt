@@ -46,4 +46,8 @@ file(GLOB NCNN_ENGINE_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h ${CMAKE_CURRENT_LI
 
 add_library(${target} STATIC ${NCNN_ENGINE_SRC_FILES})
 
+if (MACOSX)
+target_link_libraries(${target} PUBLIC utils opencv::opencv)
+else()
 target_link_libraries(${target} PUBLIC utils ncnn::ncnn opencv::opencv)
+endif()

@@ -13,6 +13,7 @@
         <edit>编辑(&E)</edit>
         <help>帮助(&H)</help>
         <exit>退出(&X)</exit>
+        <setting>设置</setting>
         <about>关于</about>
         <about_qt>关于QT</about_qt>
     </main>
@@ -37,10 +38,15 @@
         <version>版本：0.1</version>
         <publish>发布于：2022-8-31</publish>
         <desc>该项目为开源项目，集成了一些开源的有趣图像AI应用，使用NCNN+Vulkan使得更多的人可以轻松的体验AI带来的工作效率提升，后续会持续增加一些其它有趣的AI功能。</desc>
-        <vendor>该项目是基于GPLv3的license构建的开源项目，项目使用QT6.2.4建立界面，使用OpenCV4.5来进行基本的图像处理，使用NCNN+Vulkan作为AI推理引擎，目前使用到的模型有：HRNet进行背景消除，使用RealESRGan进行图像超分辨率。
+        <vendor>该项目是基于GPLv3的license构建的开源项目，项目使用QT6.2.4建立界面，使用OpenCV4.5来进行基本的图像处理，使用NCNN+Vulkan作为AI推理引擎，目前使用到的模型有：Modnet进行背景消除，使用RealESRGan进行图像超分辨率。
         </vendor>
         <link>https://github.com/cc-ken/PictureFun</link>
         <author>作者：ai-double.com</author>
         <license>软件授权：GPLv3</license>
     </about>
+    <setting>
+        <lang>语言</lang>
+        <comp>计算单元</comp>
+        <scale>放大倍数</scale>
+    </setting>
 </texts>

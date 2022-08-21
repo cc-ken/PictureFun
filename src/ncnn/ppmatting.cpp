@@ -7,6 +7,7 @@
 
 #include "utils/system.h"
 #include "utils/logger.h"
+#include "ncnn_engine.h"
 
 namespace {
 
@@ -44,9 +45,8 @@ public:
         opt.workspace_allocator = &g_workspace_pool_allocator;
 
         // use vulkan compute
-        if (ncnn::get_gpu_count() != 0)
+        if (!NcnnEngine::useCPU())
             opt.use_vulkan_compute = true;
-
 
         std::string resFolder = getCurrFilePath() + "/Resources/models/";
         LOG_INFO("load models from resource folder:" << resFolder);

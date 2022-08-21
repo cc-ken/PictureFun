@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <vector>
 #include <opencv2/imgproc.hpp>
+#include "ncnn_engine.h"
 
 namespace pf
 {
@@ -63,15 +64,18 @@ public:
     virtual ~RealESRGANImpl() = default;
     
     virtual int init(int _scale) override {
-        std::lock_guard<std::mutex> theGuard(mutex_);
         if (inited_) {
-            LOG_WARN("realesrgan, inited.");
-            return 1;
+            if (_scale == scale) {
+                LOG_WARN("realesrgan, inited. _scale=" << scale);
+                return 1;
+            }
+            uninit();
         }
-        
+        std::lock_guard<std::mutex> theGuard(mutex_);
+
         net.reset(new ncnn::Net());
 
-        useVulkan_ = true;
+        useVulkan_ = !NcnnEngine::useCPU();
         
         net->opt.use_vulkan_compute = useVulkan_;
         if (useVulkan_) {
@@ -100,7 +104,7 @@ public:
 
         int ret0 = net->load_param((resFolder + "realesr-animevideov3-x" + std::to_string(scale) + ".param").c_str());
         int ret1 = net->load_model((resFolder + "realesr-animevideov3-x" + std::to_string(scale) + ".bin").c_str());
-        LOG_INFO("load realsrgan, ret0=" << ret0 << ", ret1=" << ret1);
+        LOG_INFO("load realsrgan, ret0=" << ret0 << ", ret1=" << ret1 << ", scale=" << scale);
         if (ret0 != 0 || ret1 != 0)
             return -1;
         

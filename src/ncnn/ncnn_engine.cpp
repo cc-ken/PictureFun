@@ -2,6 +2,7 @@
 #include "net.h"
 #include <vulkan/vulkan.h>
 #include "utils/logger.h"
+#include "utils/preference.h"
 
 namespace pf {
 
@@ -24,6 +25,11 @@ int NcnnEngine::uninit()
 
     ncnn::destroy_gpu_instance();
     return 0;
+}
+
+bool NcnnEngine::useCPU() {
+    auto comp = preference::i().get("comp", "GPU");
+    return (comp != "GPU") || (ncnn::get_gpu_count() == 0);
 }
 
 }

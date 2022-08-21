@@ -14,6 +14,7 @@
 #include "ppmatting.h"
 #include "realesrgan.h"
 #include "imgproc.h"
+#include "settingdlg.h"
 
 using namespace pf;
 
@@ -71,6 +72,14 @@ MainWnd::~MainWnd()
     NcnnEngine::instance().uninit();
 }
 
+void MainWnd::closeEvent(QCloseEvent *event) {
+    auto windSize = size();
+    preference::i().set("main-width", windSize.width());
+    preference::i().set("main-height", windSize.height());
+    
+    preference::i().save();
+}
+
 void MainWnd::pixelValue(int x, int y, int r, int g, int b)
 {
 #if !defined(NDEBUG)
@@ -83,6 +92,8 @@ void MainWnd::createMenus()
     fileMenu = menuBar()->addMenu(PF_TEXT("main.file", "&File"));
     fileMenu->addAction(openAct);
     fileMenu->addAction(saveAct);
+    fileMenu->addSeparator();
+    fileMenu->addAction(settingAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
 
@@ -126,6 +137,14 @@ void MainWnd::about() {
 
     msgBox->show();
     msgBox->exec();
+}
+
+void MainWnd::setting()
+{
+    SettingDlg dlg(this);
+
+    dlg.show();
+    dlg.exec();
 }
 
 void MainWnd::createActions()
@@ -174,11 +193,27 @@ void MainWnd::createActions()
     toolbar->addAction(srAct);
     connect(srAct, &QAction::triggered, this, &MainWnd::onSR);
 
+#if defined(__APPLE__)
+    settingAct = new QAction(("Setting"), this);
+#else
+    settingAct = new QAction(PF_TEXT("main.setting", "&Setting"), this);
+#endif
+    settingAct->setStatusTip(PF_TEXT("main.setting", "Setting"));
+    connect(settingAct, &QAction::triggered, this, &MainWnd::setting);
+
+#if defined(__APPLE__)
+    aboutAct = new QAction("About", this);
+#else
     aboutAct = new QAction(PF_TEXT("main.about", "&About"), this);
+#endif
     aboutAct->setStatusTip(PF_TEXT("main.about", "Show the application's About box"));
     connect(aboutAct, &QAction::triggered, this, &MainWnd::about);
     
+#if defined(__APPLE__)
+    aboutQtAct = new QAction("About Qt", this);
+#else
     aboutQtAct = new QAction(PF_TEXT("main.about_qt", "About &Qt"), this);
+#endif
     aboutQtAct->setStatusTip(PF_TEXT("main.about_qt", "Show the Qt library's About box"));
     connect(aboutQtAct, &QAction::triggered, application_, &QApplication::aboutQt);
 }
@@ -229,7 +264,7 @@ void MainWnd::onSR() {
         LOG_WARN("Please onpen picture to do super resolution");
         return;
     }
-    sr->init(4);
+    sr->init(preference::i().get("scale", 4));
     auto upscaled = sr->inference(input);
     imgView_->setMatImage(upscaled, false, true);
 }

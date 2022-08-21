@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<texts>
+    <main>
+        <title>AI Picture Editor</title>
+        <open>Open</open>
+        <save>Save</save>
+        <pallete>Background</pallete>
+        <fit>Fit</fit>
+        <bg_remover>BG Remover</bg_remover>
+        <sr>AI Amplify</sr>
+        <select>Select</select>
+        <file>File(&F)</file>
+        <edit>Edit(&E)</edit>
+        <help>Help(&H)</help>
+        <exit>Exit(&X)</exit>
+        <setting>Setting</setting>
+        <about>About</about>
+        <about_qt>About QT</about_qt>
+    </main>
+    <titles>
+        <open_file>Select the file to open</open_file>
+        <save_file>Select the file to save</save_file>
+        <about>About AI PictureFun</about>
+    </titles>
+    <tips>
+        <open>Open File Dialog to select the file to process, or drag the file into the window to start.</open>
+        <save>Save as...</save>
+        <pallete>Select the new background color</pallete>
+        <bg_remover>One click to remobe background</bg_remover>
+        <sr>Super resolution of low quality picture by AI</sr>
+        <select>Select picture area</select>
+        <exit>Exit the program</exit>
+        <fit>Let picture fit the window</fit>
+        <about>About the AI picture editor</about>
+        <saved>File has been successfully saved to: </saved>
+    </tips>
+    <about>
+        <version>Version: 0.1</version>
+        <publish>Published at: 2022-8-31</publish>
+        <desc>The project is Open Source, It has integrated some funny AI picture processor. It uses NCNN+Vulkan to inference the AI model and then let more users can easily to enjoy the fun brought by the AI. We will continue to research and add more other AI ability to the software in future.</desc>
+        <vendor>The project is licensed under GPLv3, it has adopted QT6.2.4 to build the UI and uses OpenCV4.5 to do basic image processing, uses NCNN+Vulkan as the AI inference engine. Currently pretrained AI models have:
+            - Modnet to background remover
+            - RealESRGan for super resolution
+        </vendor>
+        <link>https://github.com/cc-ken/PictureFun</link>
+        <author>Auther: ai-double.com</author>
+        <license>License: GPLv3</license>
+    </about>
+    <setting>
+        <lang>Language</lang>
+        <comp>Computer Unit</comp>
+        <scale>Amplify Scale</scale>
+    </setting>
+</texts>

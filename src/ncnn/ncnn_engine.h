@@ -15,6 +15,8 @@ public:
 
     int uninit();
     
+    static bool useCPU();
+    
 protected:
     NcnnEngine() = default;
 };

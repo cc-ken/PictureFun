@@ -12,8 +12,13 @@ preference::preference(const std::string& filePath, bool readonly)
     : filePath_(filePath)
     , readonly_(readonly)
 {
-    if (filePath_.empty())
-        filePath_ = pf::getDefaultFolder() + "/pf/preference.yml";
+    if (filePath_.empty()) {
+        std::string baseName = pf::getDefaultFolder() + "/pf";
+        filePath_ = baseName + "/preference.yml";
+        if (!cv::utils::fs::exists(baseName)) {
+            cv::utils::fs::createDirectories(baseName);
+        }
+    }
     reload();
 }
 

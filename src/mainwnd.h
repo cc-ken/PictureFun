@@ -41,6 +41,8 @@ protected slots:
     void onSR();
     void pixelValue(int x, int y, int r, int g, int b);
     void about();
+    void setting();
+    void closeEvent(QCloseEvent *event) override;
     
 protected:
     void createMenus();
@@ -65,6 +67,8 @@ protected:
     QAction *bgRemoveAct;
     QAction *bgColorAct;
     QAction *srAct;
+    QAction *settingAct;
+
     QLabel *infoLabel;
     QToolBar *toolbar;
     cv::Scalar bgColor_;

@@ -68,17 +68,22 @@ add_executable(${target} ${EXECUTABLE_TYPE}
 #Hack for conan library missed qicon
 if(NOT TARGET Qt6::QIconPlugin)
     add_library(Qt6::QIconPlugin INTERFACE IMPORTED)
-    set_property(TARGET Qt6::QIconPlugin PROPERTY INTERFACE_LINK_LIBRARIES 
-        $<$<CONFIG:Debug>:qicod>
-        $<$<CONFIG:Release>:qico>
-        $<$<CONFIG:RelWithDebInfo>:qicod>
-        $<$<CONFIG:MinSizeRel>:qico>
-    )
-    set_property(TARGET Qt6::QIconPlugin PROPERTY INTERFACE_LINK_DIRECTORIES
-        $<$<CONFIG:Debug>:${Qt6_QWbmpPlugin_LIB_DIRS_DEBUG}>
-        $<$<CONFIG:Release>:${Qt6_QWbmpPlugin_LIB_DIRS_RELEASE}>
-        $<$<CONFIG:RelWithDebInfo>:${Qt6_QWbmpPlugin_LIB_DIRS_DEBUG}>
-        $<$<CONFIG:MinSizeRel>:${Qt6_QWbmpPlugin_LIB_DIRS_RELEASE}>)
+    if (WINDOWS)
+        set_property(TARGET Qt6::QIconPlugin PROPERTY INTERFACE_LINK_LIBRARIES 
+            $<$<CONFIG:Debug>:qicod>
+            $<$<CONFIG:Release>:qico>
+            $<$<CONFIG:RelWithDebInfo>:qicod>
+            $<$<CONFIG:MinSizeRel>:qico>
+        )
+        set_property(TARGET Qt6::QIconPlugin PROPERTY INTERFACE_LINK_DIRECTORIES
+            $<$<CONFIG:Debug>:${Qt6_QWbmpPlugin_LIB_DIRS_DEBUG}>
+            $<$<CONFIG:Release>:${Qt6_QWbmpPlugin_LIB_DIRS_RELEASE}>
+            $<$<CONFIG:RelWithDebInfo>:${Qt6_QWbmpPlugin_LIB_DIRS_DEBUG}>
+            $<$<CONFIG:MinSizeRel>:${Qt6_QWbmpPlugin_LIB_DIRS_RELEASE}>)
+    else()
+        set_property(TARGET Qt6::QIconPlugin PROPERTY INTERFACE_LINK_LIBRARIES qico)
+        set_property(TARGET Qt6::QIconPlugin PROPERTY INTERFACE_LINK_DIRECTORIES ${Qt6_LIB_DIRS})
+    endif()
 endif()
 
 target_link_libraries(${target} PRIVATE utils Qt6::Gui Qt6::Core Qt6::Widgets Qt6::QIconPlugin ncnn_engine)

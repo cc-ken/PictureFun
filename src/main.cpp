@@ -8,6 +8,7 @@
 
 #include "utils/logger.h"
 #include "utils/i18n.h"
+#include "utils/preference.h"
 #include "utils/system.h"
 
 #if defined(_WINDOWS)
@@ -28,7 +29,8 @@ int main(int argc, char *argv[])
     target |= Logger::eLogSys;
 #endif
     Logger::i().init(target);
-    auto textPath = getCurrFilePath() + "/lang/cn.xml";
+    auto lang = preference::i().get("lang", "cn");
+    auto textPath = getCurrFilePath() + "/lang/" + lang + ".xml";
     LOG_INFO("Loading texts from:" << textPath);
     i18n::i().load(textPath);
 
