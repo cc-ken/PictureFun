@@ -1,7 +1,7 @@
 [requires]
     opencv/4.5.5
     qt/6.2.4
-    spdlog/1.10.0
+    spdlog/1.10.0@pf/stable
     tinyxml2/9.0.0
     ncnn/1.0.0@pf/stable
 
@@ -12,3 +12,6 @@
     opencv:with_ffmpeg=False
     qt:qtimageformats=True
     qt:with_libjpeg=libjpeg
+    qt:with_glib=False
+    qt:with_odbc=False
+    harfbuzz:with_glib=False

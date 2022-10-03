@@ -239,6 +239,7 @@ class QtConan(ConanFile):
         for module in self._get_module_tree:
             if self.options.get_safe(module):
                 _enablemodule(module)
+        _enablemodule("qtimageformats")
 
     def validate(self):
         # C++ minimum standard required
@@ -323,133 +324,15 @@ class QtConan(ConanFile):
             raise ConanInvalidConfiguration("gssapi cannot be enabled until conan-io/conan-center-index#4102 is closed")
 
     def requirements(self):
-        self.requires("zlib/1.2.12")
-        if self.options.openssl:
-            self.requires("openssl/1.1.1o")
-        if self.options.with_pcre2:
-            self.requires("pcre2/10.37") # needs to be < 10.38 or qt fails to detect visual studio static library
-        if self.options.get_safe("with_vulkan"):
-            self.requires("vulkan-loader/1.3.211.0")
-            if tools.is_apple_os(self.settings.os):
-                self.requires("moltenvk/1.1.9")
-        if self.options.with_glib:
-            self.requires("glib/2.72.1")
-        if self.options.with_doubleconversion and not self.options.multiconfiguration:
-            self.requires("double-conversion/3.2.0")
-        if self.options.get_safe("with_freetype", False) and not self.options.multiconfiguration:
-            self.requires("freetype/2.11.1")
-        if self.options.get_safe("with_fontconfig", False):
-            self.requires("fontconfig/2.13.93")
-        if self.options.get_safe("with_icu", False):
-            self.requires("icu/71.1")
-        if self.options.get_safe("with_harfbuzz", False) and not self.options.multiconfiguration:
-            self.requires("harfbuzz/4.3.0")
-        if self.options.get_safe("with_libjpeg", False) and not self.options.multiconfiguration:
-            if self.options.with_libjpeg == "libjpeg-turbo":
-                self.requires("libjpeg-turbo/2.1.2")
-            else:
-                self.requires("libjpeg/9d")
-        if self.options.get_safe("with_libpng", False) and not self.options.multiconfiguration:
-            self.requires("libpng/1.6.37")
-        if self.options.with_sqlite3 and not self.options.multiconfiguration:
-            self.requires("sqlite3/3.38.5")
-            self.options["sqlite3"].enable_column_metadata = True
-        if self.options.get_safe("with_mysql", False):
-            self.requires("libmysqlclient/8.0.25")
-        if self.options.with_pq:
-            self.requires("libpq/14.2")
-        if self.options.with_odbc:
-            if self.settings.os != "Windows":
-                self.requires("odbc/2.3.9")
-        if self.options.get_safe("with_openal", False):
-            self.requires("openal/1.21.1")
-        if self.options.get_safe("with_libalsa", False):
-            self.requires("libalsa/1.2.5.1")
-        if self.options.gui and self.settings.os in ["Linux", "FreeBSD"]:
-            self.requires("xorg/system")
-            self.requires("xkbcommon/1.4.1")
-        if self.settings.os != "Windows" and self.options.get_safe("opengl", "no") != "no":
-            self.requires("opengl/system")
-        if self.options.with_zstd:
-            self.requires("zstd/1.5.2")
-        if self.options.qtwayland:
-            self.requires("wayland/1.20.0")
-        if self.options.with_brotli:
-            self.requires("brotli/1.0.9")
-        if self.options.get_safe("qtwebengine") and self.settings.os == "Linux":
-            self.requires("expat/2.4.8")
-            self.requires("opus/1.3.1")
-            self.requires("xorg-proto/2021.4")
-            self.requires("libxshmfence/1.3")
-            self.requires("nss/3.77")
-            self.requires("libdrm/2.4.109")
-        if self.options.get_safe("with_gstreamer", False):
-            self.requires("gst-plugins-base/1.19.2")
-        if self.options.get_safe("with_pulseaudio", False):
-            self.requires("pulseaudio/14.2")
-        if self.options.with_dbus:
-            self.requires("dbus/1.12.20")
-        if self.settings.os in ['Linux', 'FreeBSD'] and self.options.with_gssapi:
-            self.requires("krb5/1.18.3") # conan-io/conan-center-index#4102
+        pass
 
     def build_requirements(self):
         self.build_requires("cmake/3.23.1")
         self.build_requires("ninja/1.10.2")
-        self.build_requires("pkgconf/1.7.4")
-        if self.settings.os == "Windows":
-            self.build_requires('strawberryperl/5.30.0.1')
-
-        if self.options.get_safe("qtwebengine"):
-            self.build_requires("nodejs/16.3.0")
-            self.build_requires("gperf/3.1")
-            # gperf, bison, flex, python >= 2.7.5 & < 3
-            if self.settings.os != "Windows":
-                self.build_requires("bison/3.7.6")
-                self.build_requires("flex/2.6.4")
-            else:
-                self.build_requires("winflexbison/2.5.24")
-
-        if self.options.qtwayland:
-            self.build_requires("wayland/1.20.0")
 
     def source(self):
         tools.get(**self.conan_data["sources"][self.version],
                   strip_root=True, destination="qt6")
-
-        # patching in source method because of no_copy_source attribute
-
-        tools.replace_in_file(os.path.join("qt6", "CMakeLists.txt"),
-                        "enable_testing()",
-                        "include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)\nconan_basic_setup(KEEP_RPATHS)\n"
-                               "set(QT_EXTRA_INCLUDEPATHS ${CONAN_INCLUDE_DIRS})\n"
-                               "set(QT_EXTRA_DEFINES ${CONAN_DEFINES})\n"
-                               "set(QT_EXTRA_LIBDIRS ${CONAN_LIB_DIRS})\n"
-                               "enable_testing()")
-
-        for patch in self.conan_data.get("patches", {}).get(self.version, []):
-            tools.patch(**patch)
-        if tools.Version(self.version) >= "6.2.0":
-            for f in ["renderer", os.path.join("renderer", "core"), os.path.join("renderer", "platform")]:
-                tools.replace_in_file(os.path.join(self.source_folder, "qt6", "qtwebengine", "src", "3rdparty", "chromium", "third_party", "blink", f, "BUILD.gn"),
-                                      "  if (enable_precompiled_headers) {\n    if (is_win) {",
-                                      "  if (enable_precompiled_headers) {\n    if (false) {"
-                                      )
-
-        tools.replace_in_file(os.path.join("qt6", "qtbase", "cmake", "QtInternalTargets.cmake"),
-                              "-Zc:wchar_t",
-                              "-Zc:wchar_t -Zc:twoPhase-")
-        for f in ["FindPostgreSQL.cmake"]:
-            file = os.path.join("qt6", "qtbase", "cmake", f)
-            if os.path.isfile(file):
-                os.remove(file)
-
-        # workaround QTBUG-94356
-        if tools.Version(self.version) >= "6.1.1":
-            zlib_file_name = "FindWrapSystemZLIB.cmake" if tools.Version(self.version) >= "6.3.1" else "FindWrapZLIB.cmake"
-            tools.replace_in_file(os.path.join("qt6", "qtbase", "cmake", zlib_file_name), '"-lz"', 'ZLIB::ZLIB')
-            tools.replace_in_file(os.path.join("qt6", "qtbase", "configure.cmake"),
-                "set_property(TARGET ZLIB::ZLIB PROPERTY IMPORTED_GLOBAL TRUE)",
-                "")
 
     def _xplatform(self):
         if self.settings.os == "Linux":
@@ -573,63 +456,14 @@ class QtConan(ConanFile):
         for module in self._get_module_tree:
             if module != 'qtbase':
                 cmake.definitions["BUILD_%s" % module] = ("ON" if self.options.get_safe(module) else "OFF")
-
         cmake.definitions["FEATURE_system_zlib"] = "ON"
-
-        cmake.definitions["INPUT_opengl"] = self.options.get_safe("opengl", "no")
-
-        # openSSL
-        if not self.options.openssl:
-            cmake.definitions["INPUT_openssl"] = "no"
-        else:
-            if self.options["openssl"].shared:
-                cmake.definitions["INPUT_openssl"] = "runtime"
-            else:
-                cmake.definitions["INPUT_openssl"] = "linked"
-
-        if self.options.with_dbus:
-            cmake.definitions["INPUT_dbus"] = "linked"
-        else:
-            cmake.definitions["FEATURE_dbus"] = "OFF"
-
-
-        for opt, conf_arg in [("with_glib", "glib"),
-                              ("with_icu", "icu"),
-                              ("with_fontconfig", "fontconfig"),
-                              ("with_mysql", "sql_mysql"),
-                              ("with_pq", "sql_psql"),
-                              ("with_odbc", "sql_odbc"),
-                              ("gui", "gui"),
-                              ("widgets", "widgets"),
-                              ("with_zstd", "zstd"),
-                              ("with_vulkan", "vulkan"),
-                              ("with_brotli", "brotli"),
-                              ("with_gssapi", "gssapi")]:
-            cmake.definitions["FEATURE_%s" % conf_arg] = ("ON" if self.options.get_safe(opt, False) else "OFF")
-
-
-        for opt, conf_arg in [
-                              ("with_doubleconversion", "doubleconversion"),
-                              ("with_freetype", "freetype"),
-                              ("with_harfbuzz", "harfbuzz"),
-                              ("with_libjpeg", "jpeg"),
-                              ("with_libpng", "png"),
-                              ("with_sqlite3", "sqlite"),
-                              ("with_pcre2", "pcre2"),]:
-            if self.options.get_safe(opt, False):
-                if self.options.multiconfiguration:
-                    cmake.definitions["FEATURE_%s" % conf_arg] = "ON"
-                else:
-                    cmake.definitions["FEATURE_system_%s" % conf_arg] = "ON"
-            else:
-                cmake.definitions["FEATURE_%s" % conf_arg] = "OFF"
-                cmake.definitions["FEATURE_system_%s" % conf_arg] = "OFF"
 
         for feature in str(self.options.disabled_features).split():
             cmake.definitions["FEATURE_%s" % feature] = "OFF"
 
         if self.settings.os == "Macos":
             cmake.definitions["FEATURE_framework"] = "OFF"
+            cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = "arm64;x86_64"
         elif self.settings.os == "Android":
             cmake.definitions["CMAKE_ANDROID_NATIVE_API_LEVEL"] = self.settings.os.api_level
             cmake.definitions["ANDROID_ABI"] =  {"armv7": "armeabi-v7a",
@@ -639,23 +473,6 @@ class QtConan(ConanFile):
 
         if self.options.sysroot:
             cmake.definitions["CMAKE_SYSROOT"] = self.options.sysroot
-
-        if self.options.device:
-            cmake.definitions["QT_QMAKE_TARGET_MKSPEC"] = os.path.join("devices", self.options.device)
-        else:
-            xplatform_val = self._xplatform()
-            if xplatform_val:
-                cmake.definitions["QT_QMAKE_TARGET_MKSPEC"] = xplatform_val
-            else:
-                self.output.warn("host not supported: %s %s %s %s" %
-                                 (self.settings.os, self.settings.compiler,
-                                  self.settings.compiler.version, self.settings.arch))
-        if self.options.cross_compile:
-            cmake.definitions["QT_QMAKE_DEVICE_OPTIONS"] = "CROSS_COMPILE=%s" % self.options.cross_compile
-
-        cmake.definitions["FEATURE_pkg_config"] = "ON"
-        if self.settings.compiler == "gcc" and self.settings.build_type == "Debug" and not self.options.shared:
-            cmake.definitions["BUILD_WITH_PCH"]= "OFF" # disabling PCH to save disk space
 
         if self.settings.os == "Windows":
             cmake.definitions["HOST_PERL"] = getattr(self, "user_info_build", self.deps_user_info)["strawberryperl"].perl
@@ -913,17 +730,7 @@ class QtConan(ConanFile):
                 requires.append("Core")
             self.cpp_info.components[componentname].requires = _get_corrected_reqs(requires)
 
-        core_reqs = ["zlib::zlib"]
-        if self.options.with_pcre2:
-            core_reqs.append("pcre2::pcre2")
-        if self.options.with_doubleconversion:
-            core_reqs.append("double-conversion::double-conversion")
-        if self.options.get_safe("with_icu", False):
-            core_reqs.append("icu::icu")
-        if self.options.with_zstd:
-            core_reqs.append("zstd::zstd")
-        if self.options.with_glib:
-            core_reqs.append("glib::glib")
+        core_reqs = []
 
         _create_module("Core", core_reqs)
         if self.settings.os == "Windows":
@@ -945,30 +752,6 @@ class QtConan(ConanFile):
             self.cpp_info.components["qtCore"].libs.append("Qt6Core_qobject%s" % libsuffix)
         if self.options.gui:
             gui_reqs = []
-            if self.options.with_dbus:
-                gui_reqs.append("DBus")
-            if self.options.with_freetype:
-                gui_reqs.append("freetype::freetype")
-            if self.options.with_libpng:
-                gui_reqs.append("libpng::libpng")
-            if self.options.get_safe("with_fontconfig", False):
-                gui_reqs.append("fontconfig::fontconfig")
-            if self.settings.os in ["Linux", "FreeBSD"]:
-                gui_reqs.extend(["xorg::xorg", "xkbcommon::xkbcommon"])
-            if self.settings.os != "Windows" and self.options.get_safe("opengl", "no") != "no":
-                gui_reqs.append("opengl::opengl")
-            if self.options.get_safe("with_vulkan", False):
-                gui_reqs.append("vulkan-loader::vulkan-loader")
-                if tools.is_apple_os(self.settings.os):
-                    gui_reqs.append("moltenvk::moltenvk")
-            if self.options.with_harfbuzz:
-                gui_reqs.append("harfbuzz::harfbuzz")
-            if self.options.with_libjpeg == "libjpeg-turbo":
-                gui_reqs.append("libjpeg-turbo::libjpeg-turbo")
-            if self.options.with_libjpeg == "libjpeg":
-                gui_reqs.append("libjpeg::libjpeg")
-            if self.options.with_glib:
-                gui_reqs.append("glib::glib")
             _create_module("Gui", gui_reqs)
 
             build_modules.append(self._cmake_qt6_private_file("Gui"))
@@ -1000,19 +783,13 @@ class QtConan(ConanFile):
                 _create_plugin("QXcbIntegrationPlugin", "qxcb", "platforms", ["Core", "Gui", "XcbQpaPrivate"])
 
         if self.options.with_sqlite3:
-            _create_plugin("QSQLiteDriverPlugin", "qsqlite", "sqldrivers", ["sqlite3::sqlite3"])
+            _create_plugin("QSQLiteDriverPlugin", "qsqlite", "sqldrivers", [])
         if self.options.with_pq:
-            _create_plugin("QPSQLDriverPlugin", "qsqlpsql", "sqldrivers", ["libpq::libpq"])
+            _create_plugin("QPSQLDriverPlugin", "qsqlpsql", "sqldrivers", [])
         if self.options.with_odbc:
             if self.settings.os != "Windows":
-                _create_plugin("QODBCDriverPlugin", "qsqlodbc", "sqldrivers", ["odbc::odbc"])
+                _create_plugin("QODBCDriverPlugin", "qsqlodbc", "sqldrivers", [])
         networkReqs = []
-        if self.options.openssl:
-            networkReqs.append("openssl::openssl")
-        if self.options.with_brotli:
-            networkReqs.append("brotli::brotli")
-        if self.settings.os in ['Linux', 'FreeBSD'] and self.options.with_gssapi:
-            networkReqs.append("krb5::krb5-gssapi")
         _create_module("Network", networkReqs)
         _create_module("Sql")
         _create_module("Test")
@@ -1086,8 +863,8 @@ class QtConan(ConanFile):
                 _create_module("SvgWidgets", ["Gui", "Svg", "Widgets"])
 
         if self.options.qtwayland and self.options.gui:
-            _create_module("WaylandClient", ["Gui", "wayland::wayland-client"])
-            _create_module("WaylandCompositor", ["Gui", "wayland::wayland-server"])
+            _create_module("WaylandClient", ["Gui"])
+            _create_module("WaylandCompositor", ["Gui"])
 
         if self.options.get_safe("qtactiveqt") and self.settings.os == "Windows":
             _create_module("AxBase", ["Gui", "Widgets"])
@@ -1129,7 +906,8 @@ class QtConan(ConanFile):
                 _create_module("3DQuickInput", ["3DCore", "3DInput", "3DQuick", "Gui", "Qml"])
                 _create_module("3DQuickRender", ["3DCore", "3DQuick", "3DRender", "Gui", "Qml"])
                 _create_module("3DQuickScene2D", ["3DCore", "3DQuick", "3DRender", "Gui", "Qml"])
-        if self.options.get_safe("qtimageformats"):
+        print("---->check imageformats is: ", self.options.get_safe("qtimageformats"))
+        if True:
             _create_plugin("ICNSPlugin", "qicns", "imageformats", ["Gui"])
             _create_plugin("QJp2Plugin", "qjp2", "imageformats", ["Gui"])
             _create_plugin("QMacHeifPlugin", "qmacheif", "imageformats", ["Gui"])
@@ -1164,7 +942,7 @@ class QtConan(ConanFile):
                 _create_module("MultimediaQuick", ["Multimedia", "Quick"])
             _create_plugin("QM3uPlaylistPlugin", "qtmultimedia_m3u", "playlistformats", [])
             if self.options.with_gstreamer:
-                _create_module("MultimediaGstTools", ["Multimedia", "MultimediaWidgets", "Gui", "gst-plugins-base::gst-plugins-base"])
+                _create_module("MultimediaGstTools", ["Multimedia", "MultimediaWidgets", "Gui"])
                 _create_plugin("QGstreamerAudioDecoderServicePlugin", "gstaudiodecoder", "mediaservice", [])
                 _create_plugin("QGstreamerCaptureServicePlugin", "gstmediacapture", "mediaservice", [])
                 _create_plugin("QGstreamerPlayerServicePlugin", "gstmediaplayer", "mediaservice", [])
@@ -1220,8 +998,7 @@ class QtConan(ConanFile):
         if self.options.get_safe("qtwebengine") and qt_quick_enabled:
             webenginereqs = ["Gui", "Quick", "WebChannel", "Positioning"]
             if self.settings.os == "Linux":
-                webenginereqs.extend(["expat::expat", "opus::libopus", "xorg-proto::xorg-proto", "libxshmfence::libxshmfence", \
-                                      "nss::nss", "libdrm::libdrm"])
+                webenginereqs.extend([])
             _create_module("WebEngineCore", webenginereqs)
             _create_module("WebEngineQuick", ["WebEngineCore"])
             _create_module("WebEngineWidgets", ["WebEngineCore", "Quick", "PrintSupport", "Widgets", "Gui", "Network"])

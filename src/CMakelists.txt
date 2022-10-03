@@ -20,11 +20,11 @@ file(GLOB RESOURCE_FILES ${CMAKE_CURRENT_LIST_DIR}/lang/*.xml)
 
 if (APPLE)
     file(GLOB DNN_MODEL_FILES ${CMAKE_CURRENT_LIST_DIR}/models/*.bin ${CMAKE_CURRENT_LIST_DIR}/models/*.param)
-    list(APPEND NCNN_LIBS "-F ${ncnn_FRAMEWORK_DIRS}")
-    foreach(framework IN LISTS ncnn_FRAMEWORKS)
-        list(APPEND NCNN_FRAMEWORKS "${ncnn_FRAMEWORK_DIRS}/${framework}.framework")
+    list(APPEND NCNN_LIBS "-F ${ncnn_FRAMEWORK_DIRS_RELEASE}")
+    foreach(framework IN LISTS ncnn_FRAMEWORKS_RELEASE)
+        list(APPEND NCNN_FRAMEWORKS "${ncnn_FRAMEWORK_DIRS_RELEASE}/${framework}.framework")
         list(APPEND NCNN_LIBS "-framework ${framework}")
-    endforeach(framework IN LISTS ncnn_FRAMEWORKS)
+    endforeach(framework IN LISTS ncnn_FRAMEWORKS_RELEASE)
     list(APPEND NCNN_LIBS "-F $ENV{VULKAN_SDK}/Frameworks/" "-framework vulkan")
 
     list(APPEND NCNN_FRAMEWORKS
@@ -81,8 +81,8 @@ if(NOT TARGET Qt6::QIconPlugin)
             $<$<CONFIG:RelWithDebInfo>:${Qt6_QWbmpPlugin_LIB_DIRS_DEBUG}>
             $<$<CONFIG:MinSizeRel>:${Qt6_QWbmpPlugin_LIB_DIRS_RELEASE}>)
     else()
-        set_property(TARGET Qt6::QIconPlugin PROPERTY INTERFACE_LINK_LIBRARIES qico)
-        set_property(TARGET Qt6::QIconPlugin PROPERTY INTERFACE_LINK_DIRECTORIES ${Qt6_LIB_DIRS})
+        set_property(TARGET Qt6::QIconPlugin PROPERTY INTERFACE_LINK_LIBRARIES qico Qt6BundledPcre2 Qt6BundledHarfbuzz Qt6BundledFreetype Qt6BundledLibpng)
+        set_property(TARGET Qt6::QIconPlugin PROPERTY INTERFACE_LINK_DIRECTORIES ${Qt6_LIB_DIRS_RELEASE})
     endif()
 endif()
 
@@ -111,6 +111,7 @@ if (APPLE)
         "-framework IOSurface"
         "-framework Metal"
         "-framework QuartzCore"
+        "-framework OpenGL"
         Qt6::QCocoaIntegrationPlugin
         ${NCNN_LIBS}
     )

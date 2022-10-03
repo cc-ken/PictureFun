@@ -1,0 +1,11 @@
+[requires]
+    opencv/4.5.2@pf/stable
+    qt/6.2.4@pf/stable
+    spdlog/1.10.0@pf/stable
+    tinyxml2/9.0.0@pf/stable
+    ncnn/1.0.0@pf/stable
+
+[generators]
+    cmake_find_package_multi
+
+[options]

@@ -46,6 +46,8 @@ class Tinyxml2Conan(ConanFile):
     def configure(self):
         if self.options.shared:
             del self.options.fPIC
+        if self.settings.os == "Macos":
+            del self.settings.arch
 
     def source(self):
         tools.get(**self.conan_data["sources"][self.version],
@@ -61,6 +63,9 @@ class Tinyxml2Conan(ConanFile):
     def _configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["BUILD_TESTING"] = False
+        if self.settings.os == "Macos":
+            cmake.definitions["CMAKE_OSX_ARCHITECTURES"] = "arm64;x86_64"
+
         if tools.Version(self.version) < "8.1.0":
             # Force CMP0042 to NEW to generate a relocatable shared lib on Macos
             cmake.definitions["CMAKE_POLICY_DEFAULT_CMP0042"] = "NEW"

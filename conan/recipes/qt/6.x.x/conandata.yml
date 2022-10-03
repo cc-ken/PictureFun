@@ -17,6 +17,7 @@ sources:
     sha256: "552342a81fa76967656b0301233b4b586d36967fad5cd110765347aebe07413c"
   "6.2.4":
     url:
+      - "http://localhost:9000/qt-everywhere-src-6.2.4.tar.xz"
       - "https://download.qt.io/archive/qt/6.2/6.2.4/single/qt-everywhere-src-6.2.4.tar.xz"
       - "https://qt-mirror.dannhauer.de/archive/qt/6.2/6.2.4/single/qt-everywhere-src-6.2.4.tar.xz"
       - "https://www.funet.fi/pub/mirrors/download.qt-project.org/archive/qt/6.2/6.2.4/single/qt-everywhere-src-6.2.4.tar.xz"

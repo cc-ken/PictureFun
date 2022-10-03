@@ -14,24 +14,26 @@ Install conan by pip: `pip3 install conan`
 
 ### Macos
 
-    # build ncnn conan dependency
-    cd conan/recipes/ncnn/all
-    conan create ./ ncnn/1.0.0@pf/stable -s os=Macos -s arch=x86_64
-    conan create ./ ncnn/1.0.0@pf/stable -s os=Macos -s arch=armv8
+    # build conan dependency
+    #cd into conan/recipes to create following modules (universal, conan center doesn't have universal lib)
+    conan create ./ ncnn/1.0.0@pf/stable -s os=Macos
+    conan create ./ spdlog/1.10.0@pf/stable -s os=Macos
+    conan create ./ tinyxml2/9.0.0@pf/stable -s os=Macos -k
+    conan create ./ opencv/4.5.2@pf/stable -s os=Macos -k
+    conan create ./ qt/6.2.4@pf/stable -s os=Macos -k
 
-    # install opencv/qt dependency
-    cd ../../../
+    # back to the 
     mkdir Macos
     cd Macos
-    conan install ../ -s os=Macos -s arch=x86_64 --build=missing
-    cd MacosArm64
-    conan install ../ -s os=Macos -s arch=armv8 --build=missing
+    conan install ../pf -s os=Macos
 
     # create Xcode projects
     cd ../..
     mkdir build
     cd build
     cmake .. -G Xcode
+
+    #cmake ../qt6 -GNinja -DCMAKE_INSTALL_PREFIX=./install -DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DFEATURE_framework=OFF -DQT_BUILD_EXAMPLES=OFF -DQT_BUILD_TESTS=OFF 
 
 ### Windows
 

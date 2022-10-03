@@ -22,4 +22,6 @@ qt_add_executable(${PROJECT_NAME}2 test_package.cpp greeter.h example.qrc)
 
 set_property(TARGET ${PROJECT_NAME}2 PROPERTY CXX_STANDARD 17)
 
-target_link_libraries(${PROJECT_NAME}2 PRIVATE Qt6::Core Qt6::Network Qt6::Sql Qt6::Concurrent Qt6::Xml)
+link_directories(${Qt6_LIB_DIRS})
+target_link_libraries(${PROJECT_NAME}2 PRIVATE Qt6::Core Qt6::Network Qt6::Sql Qt6::Concurrent Qt6::Xml 
+    Qt6BundledPcre2 Qt6BundledHarfbuzz Qt6BundledFreetype Qt6BundledLibpng)
