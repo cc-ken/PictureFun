@@ -39,7 +39,7 @@ endforeach()
 #$VULKAN_SDK/bin/glslc -DNCNN_int8_storage=1 realesrgan_preproc.comp -mfmt=num
 if (APPLE)
     include_directories(
-        "${ncnn_FRAMEWORK_DIRS_RELEASE}/ncnn.framework/Versions/Current/Headers/ncnn")
+        "${ncnn_FRAMEWORK_DIRS}/ncnn.framework/Versions/Current/Headers/ncnn")
 endif()
 
 file(GLOB NCNN_ENGINE_SRC_FILES ${CMAKE_CURRENT_LIST_DIR}/*.h ${CMAKE_CURRENT_LIST_DIR}/*.cpp)

@@ -6,6 +6,6 @@
     ncnn/1.0.0@pf/stable
 
 [generators]
-    cmake_find_package_multi
+    cmake_find_package
 
 [options]
