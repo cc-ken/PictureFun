@@ -16,11 +16,11 @@ Install conan by pip: `pip3 install conan`
 
     # build conan dependency
     #cd into conan/recipes to create following modules (universal, conan center doesn't have universal lib)
-    conan create ./ ncnn/1.0.0@pf/stable -s os=Macos
-    conan create ./ spdlog/1.10.0@pf/stable -s os=Macos
-    conan create ./ tinyxml2/9.0.0@pf/stable -s os=Macos -k
-    conan create ./ opencv/4.5.2@pf/stable -s os=Macos -k
-    conan create ./ qt/6.2.4@pf/stable -s os=Macos -k
+    conan create conan/recipes/ncnn/all ncnn/1.0.0@pf/stable -s os=Macos -k
+    conan create conan/recipes/spdlog/all spdlog/1.10.0@pf/stable -s os=Macos -k
+    conan create conan/recipes/tinyxml2/all tinyxml2/9.0.0@pf/stable -s os=Macos -k
+    conan create conan/recipes/opencv/4.x opencv/4.5.2@pf/stable -s os=Macos -k
+    conan create conan/recipes/qt/6.x.x qt/6.2.4@pf/stable -s os=Macos -k
 
     # back to the 
     mkdir Macos
@@ -38,13 +38,11 @@ Install conan by pip: `pip3 install conan`
 ### Windows
 
     # build ncnn conan dependency
-    cd conan/recipes/ncnn/all
-    conan create ./ ncnn/1.0.0@pf/stable -s compiler="Visual Studio" -s arch=x86_64
+    conan create conan/recipes/ncnn/all ncnn/1.0.0@pf/stable -s compiler="Visual Studio" -s arch=x86_64
 
     # install opencv/qt dependency
-    cd ../../../
     mkdir Windows
-    cd Windows
+    cd conan/Windows
     conan install ../ -s compiler="Visual Studio" -s compiler.runtime=MDd -s build_type=Debug -s arch=x86_64 --build=missing
     conan install ../ -s compiler="Visual Studio" -s compiler.runtime=MD -s build_type=Release -s arch=x86_64 --build=missing
 
@@ -56,7 +54,7 @@ Install conan by pip: `pip3 install conan`
     
 ## AI models we used
 
-1. The current using background remove model is from this [ncnn_Android_matting](https://github.com/FeiGeChuanShu/ncnn_Android_matting.git), `hrnet-w18`, download them and put into `src/models)` folder.
+1. The current using background remove model is from this [ncnn_Android_matting](ç), by default we select the [hrnet-w18](https://github.com/ZHKKKe/MODNet), [download](https://github.com/FeiGeChuanShu/ncnn_Android_matting/tree/main/android/app/src/main/assets) them and put into `src/models)` folder.
 
 2. We integrate the [Real-ESRGAN](https://github.com/xinntao/Real-ESRGAN-ncnn-vulkan) for super resolution.
 The model can be downloaded from [animevideov3](https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesr-animevideov3.pth)
