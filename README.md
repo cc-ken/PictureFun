@@ -15,7 +15,7 @@ Install conan by pip: `pip3 install conan`
 ### Macos
 
     # build conan dependency
-    #cd into conan/recipes to create following modules (universal, conan center doesn't have universal lib)
+    # create following modules (universal, conan center doesn't have universal lib)
     conan create conan/recipes/ncnn/all ncnn/1.0.0@pf/stable -s os=Macos -k
     conan create conan/recipes/spdlog/all spdlog/1.10.0@pf/stable -s os=Macos -k
     conan create conan/recipes/tinyxml2/all tinyxml2/9.0.0@pf/stable -s os=Macos -k
@@ -41,7 +41,7 @@ Install conan by pip: `pip3 install conan`
     conan create conan/recipes/ncnn/all ncnn/1.0.0@pf/stable -s compiler="Visual Studio" -s arch=x86_64
 
     # install opencv/qt dependency
-    mkdir Windows
+    mkdir -p conan/Windows
     cd conan/Windows
     conan install ../ -s compiler="Visual Studio" -s compiler.runtime=MDd -s build_type=Debug -s arch=x86_64 --build=missing
     conan install ../ -s compiler="Visual Studio" -s compiler.runtime=MD -s build_type=Release -s arch=x86_64 --build=missing
